@@ -79,9 +79,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <property name="database.postgresql.user" value="db_user"/>
         <property name="database.postgresql.password" value="db_pass"/>
 
-        <!-- Prepare database initialization -->
-        <exec command="echo > '${server-dockyard}/postgresql/start.sh'"/>
-
         <!-- Handle each test environment -->
         <foreach param="environment-definition" target="docker-build-system">
             <fileset dir="${test-environments}">
@@ -92,10 +89,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </foreach>
 
         <!-- Add global container files -->
-        <!-- copy file="${build-templates}/mysql/start.sh" tofile="${server-dockyard}/mysql/start.sh" preservemode="true">
-            <filterchain refid="expand"/>
-        </copy -->
-
         <copy file="${build-templates}/nginx/nginx.conf" tofile="${server-dockyard}/nginx/conf/nginx.conf">
             <filterchain refid="expand"/>
         </copy>
@@ -202,8 +195,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             Database user:   ${database.${environment.database.engine}.user}:${database.${environment.database.engine}.password}
         </echo>
 
-        <!-- Build the import.sql file -->
+        <!-- Build the import files -->
         <property name="import.sql" value="${server-dockyard}/${environment.database.engine}/${environment.name}.sql"/>
+        <property name="import.sh" value="${server-dockyard}/${environment.database.engine}/${environment.name}.sh"/>
         <if>
             <equals arg1="${environment.database.name}" arg2="${database.${environment.database.engine}.name}"/>
             <then>
@@ -229,8 +223,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <property name="sr" value="s/\\\'/''/g"/>
                 <property name="command" value='sed -i "${sr}" "${import.sql}"'/>
                 <exec command="${command}"/>
-                <exec command="echo 'createdb -U${database.postgresql.user} -O${database.postgresql.user} ${environment.database.name}' >> '${server-dockyard}/postgresql/start.sh'"/>
-                <exec command="echo 'psql -U${database.postgresql.user} -d ${environment.database.name} -f/import.d/${environment.name}.sql' >> '${server-dockyard}/postgresql/start.sh'"/>
+
+                <exec command="echo '#!/bin/bash' > '${import.sh}'"/>
+                <exec command="echo 'set -e' >> '${import.sh}'"/>
+                <exec command="echo 'gosu postgres postgres --single -j ${environment.database.name} &lt; /docker-entrypoint-initdb.d/${environment.name}.sql' >> '${import.sh}'"/>
             </then>
             <elseif>
                 <equals arg1="mysql" arg2="${environment.database.engine}"/>

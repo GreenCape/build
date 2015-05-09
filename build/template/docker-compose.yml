@@ -43,8 +43,8 @@ mysql:
 pgsql:
   image: postgres:${database.postgresql.version}
   volumes:
-    - ${server-dockyard}/postgresql:/import.d
+    - ${server-dockyard}/postgresql:/docker-entrypoint-initdb.d
   environment:
-    POSTGRES_DATABASE: ${database.postgresql.name}
+    POSTGRES_DB: ${database.postgresql.name}
     POSTGRES_USER: ${database.postgresql.user}
     POSTGRES_PASSWORD: ${database.postgresql.password}

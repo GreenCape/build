@@ -1,6 +1,6 @@
 # Multi-Version Development
 
-*by Niels Braczek, (C) 2013 All rights reserved.*
+*by Niels Braczek, (C) 2013-15 All rights reserved.*
 
 This document describes a standardized layout and process for development of multi-version
 extensions. It supports
@@ -21,7 +21,36 @@ In the `build` subdirectory, use Composer to resolve the dependencies.
 
     $ cd <project>/build
     $ composer install
-    
+
+Additionally, you need to have `docker` and `docker-compose` installed on your system.
+
+## Usage
+
+The Phing build file `build.xml` located in the `build` directory provides a number of useful build targets.
+Most of these targets are implemented in separate files, which can be found in the `build/phing` directory.
+ 
+### Docker
+
+#### docker-build
+
+This is one of the most complex targets. Depending on the environment definitions read from `tests/servers`,
+it will download the requested Joomla! versions and prepare any Docker container needed to run them on the requested
+web server and database combinations. The volumes and configuration files for the containers are provided in
+`build/servers`, with a subdirectory for each container. A single `docker-compose.yml` is created in the project
+root directory to manage and link the containers.
+
+#### docker-rm
+
+Remove the containers, which where built with `docker-build`.
+
+#### docker-start
+
+Build the containers and run them in the background.
+
+#### docker-stop
+
+Stop and remove the containers.
+
 ## Directory Layouts
 
 ### Source Directory Layout

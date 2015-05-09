@@ -1,8 +1,7 @@
-/tests/servers/j3-mysql.xml
-/tests/servers/j3-mysqli.xml
-/tests/servers/default.xml
-/tests/servers/j15-latest.xml
-/tests/servers/j3-postgresql.xml
-/tests/servers/j3-pdomysql.xml
-/tests/servers/j25-latest.xml
-/tests/servers/database.xml
+/build/cache
+/build/composer.lock
+/build/servers
+/build/vendor
+/build/versions.json
+/docker-compose.yml
+/tests/servers/*.xml

@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <property name="version-cache" value="${build}/versions.json"/>
     <property name="download-cache" value="${build}/cache"/>
+    <mkdir dir="${download-cache}"/>
 
     <filterchain id="expand">
         <expandproperties/>

@@ -14,6 +14,14 @@ to that CMS.
 
 *Breklum, July 2013*
 
+## Installation
+
+Download the build environment and unpack it into your project directory.
+In the `build` subdirectory, use Composer to resolve the dependencies.
+
+    $ cd <project>/build
+    $ composer install
+    
 ## Directory Layouts
 
 ### Source Directory Layout

@@ -6,8 +6,8 @@
     <import file="${build}/phing/metrics.xml"/>
     <import file="${build}/phing/document.xml"/>
 
-    <property name="package.type" value="com_"/>
-    <property name="package.name" value="sql"/>
+    <property name="package.type" value="type_"/>
+    <property name="package.name" value="extension-name"/>
     <property name="package.version" value="1.0.0"/>
 
     <property name="qat.coverage" value="${build}/bin/qat-coverage.php"/>
@@ -26,7 +26,16 @@
     <property name="apidoc.generator" value="apigen"/>
     <property name="apidoc.title" value="${phing.project.name} ${package.version} API Documentation"/>
 
-    <xmlproperty file="${source}/installation/${package.name}.xml" prefix="package" keepRoot="false"/>
+    <property name="manifest.file" value="installation/${package.name}.xml"/>
+    <if>
+        <available property="manifest.exists" file="${source}/${manifest.file}"/>
+        <then>
+            <xmlproperty file="${source}/${manifest.file}" prefix="package" keepRoot="false"/>
+        </then>
+        <else>
+            <echo message="Manifest file '${manifest.file}' not found." level="warning"/>
+        </else>
+    </if>
 
     <fileset dir="${source}" id="source-files">
         <include name="**/*"/>

@@ -16,13 +16,28 @@ to that CMS.
 
 ## Installation
 
+### Prerequisites
+
+In order to use this build and test environment, you need to have
+
+  - [Composer][composer]
+  - [Docker][docker]
+  - [Docker-Compose][fig]
+
+properly installed on your development system. Everything else will be retrieved automatically when it is needed.
+
+[composer]: https://getcomposer.org/ "Dependency Manager for PHP"
+[docker]: https://www.docker.com/ "Container Virtualization"
+[fig]: https://www.docker.com/ "Docker Orchestration Tool"
+
+
+### Preparation of the build and test environment
+
 Download the build environment and unpack it into your project directory.
-In the `build` subdirectory, use Composer to resolve the dependencies.
+In the `build` subdirectory, call Composer to resolve the dependencies.
 
     $ cd <project>/build
     $ composer install
-
-Additionally, you need to have `docker` and `docker-compose` installed on your system.
 
 ## Usage
 

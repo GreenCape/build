@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Documentation related targets for GreenCape build environment
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+
+The "GNU General Public License" (GPL) is available at
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+@package    BuildEnvironment
+@author     Niels Braczek <nbraczek@bsds.de>
+@copyright  Copyright (C) 2013-15 BSDS Braczek Software- und DatenSysteme. All rights reserved.
+-->
+<project name="Documentation Related Targets" default="document">
+
+    <target name="document" description="Generate API documentation using the specified generator">
+        <phingcall target="document-changelog"/>
+        <!--suppress PhingDomInspection -->
+        <phingcall target="document-${apidoc.generator}"/>
+    </target>
+
+    <target name="document-phpdocumentor2" description="Generate API documentation using PHPDocumentor2" hidden="true">
+        <exec executable="phpdoc" dir="${project.basedir}" passthru="true">
+            <arg line="--target=${build}/api"/>
+            <arg line="--directory=source"/>
+            <arg line='--title="${apidoc.title}"'/>
+            <arg line="--template=zend"/>
+        </exec>
+    </target>
+
+    <target name="document-apigen" description="Generate API documentation using ApiGen" hidden="true">
+        <apigen source="${source}"
+                destination="${build}/api"
+                title="${apidoc.title}"
+                deprecated="true"
+                todo="true"
+            />
+    </target>
+
+    <target name="document-changelog" description="Generate CHANGELOG">
+        <exec executable="git" passthru="true">
+            <arg line="log"/>
+            <arg line="--pretty=format:'%+d %ad [%h] %s (%an)'"/>
+            <arg line="--date=short"/>
+            <arg line=">"/>
+            <arg path="${project.basedir}/CHANGELOG.md"/>
+        </exec>
+        <reflexive>
+            <fileset dir="${project.basedir}">
+                <include name="CHANGELOG.md"/>
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="(\n)\s*\(([^)]+)\)" replace="\1\1 Version \2\1------\1\1"/>
+                    <regexp pattern="(\n) +" replace="\1"/>
+                    <regexp pattern="(\n)(\d)" replace="\1    \2"/>
+                    <regexp pattern="^(\n)" replace="Changelog\1=========\1"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+    </target>
+
+</project>

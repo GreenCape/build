@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Setup properties for GreenCape build environment
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+
+The "GNU General Public License" (GPL) is available at
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+@package    BuildEnvironment
+@author     Niels Braczek <nbraczek@bsds.de>
+@copyright  Copyright (C) 2013-15 BSDS Braczek Software- und DatenSysteme. All rights reserved.
+-->
+<project name="Setup" default="none">
+
+    <taskdef file="${project.basedir}/build/phing/tasks.properties"/>
+
+    <property name="project.name" value="${phing.project.name}"/>
+    <property name="source" value="${project.basedir}/source"/>
+    <property name="build" value="${project.basedir}/build"/>
+    <property name="tests" value="${project.basedir}/tests"/>
+    <property name="unit-tests" value="${tests}/unit"/>
+    <property name="integration-tests" value="${tests}/integration"/>
+    <property name="system-tests" value="${tests}/system"/>
+    <property name="test-environments" value="${tests}/servers"/>
+    <property name="build-templates" value="${build}/template"/>
+    <property name="server-dockyard" value="${build}/servers"/>
+
+    <target name="none" hidden="true">
+        <fail message="This target should never be called!"/>
+    </target>
+</project>

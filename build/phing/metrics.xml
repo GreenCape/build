@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Quality Metrics related targets for GreenCape build environment
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+
+The "GNU General Public License" (GPL) is available at
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+@package    BuildEnvironment
+@author     Niels Braczek <nbraczek@bsds.de>
+@copyright  Copyright (C) 2013-15 BSDS Braczek Software- und DatenSysteme. All rights reserved.
+-->
+<project name="Quality Metrics Related Targets" default="quality">
+
+    <target name="quality" description="Generate a quality report">
+        <!-- parallel -->
+        <phingcall target="quality-depend"/>
+        <phingcall target="quality-mess-detect"/>
+        <phingcall target="quality-copy-paste-detect"/>
+        <phingcall target="quality-check-style"/>
+        <phingcall target="quality-count"/>
+        <!-- /parallel -->
+        <phingcall target="quality-code-browser"/>
+    </target>
+
+    <target name="quality-code-browser" description="Aggregate the results from all the measurement tools">
+        <exec executable="phpcb" dir="${project.basedir}" passthru="true">
+            <arg line="--log=${build}/logs"/>
+            <arg line="--output=${build}/code-browser"/>
+            <arg line="--source=source"/>
+            <arg line=" --crapThreshold=10"/>
+        </exec>
+    </target>
+
+    <target name="quality-depend" description="Generate depend.xml and software metrics charts using PHP Depend">
+        <phpdepend file="${source}">
+            <logger type="jdepend-xml" outfile="${build}/logs/depend.xml"/>
+            <logger type="jdepend-chart" outfile="${build}/charts/dependencies.svg"/>
+            <logger type="overview-pyramid" outfile="${build}/charts/overview-pyramid.svg"/>
+            <logger type="summary-xml" outfile="${build}/logs/summary.xml"/>
+        </phpdepend>
+    </target>
+
+    <target name="quality-mess-detect" description="Generate pmd.xml using PHP MessDetector">
+        <phpmd rulesets="${build}/phpmd.xml">
+            <fileset refid="php-files"/>
+            <formatter type="xml" outfile="${build}/logs/pmd.xml"/>
+        </phpmd>
+    </target>
+
+    <target name="quality-copy-paste-detect" description="Generate pmd-cpd.xml using PHP CopyPasteDetector">
+        <phpcpd>
+            <fileset refid="php-files"/>
+            <formatter type="pmd" outfile="${build}/logs/pmd-cpd.xml"/>
+        </phpcpd>
+    </target>
+
+    <target name="quality-check-style" description="Generate checkstyle.xml using PHP CodeSniffer">
+        <phpcodesniffer standard="${build}/phpcs/Joomla" showSniffs="true" showWarnings="true">
+            <fileset refid="php-files"/>
+            <formatter type="checkstyle" outfile="${build}/logs/checkstyle.xml"/>
+        </phpcodesniffer>
+    </target>
+
+    <target name="quality-count" description="Generate phploc.csv">
+        <exec executable="phploc" dir="${project.basedir}" passthru="true">
+            <arg line="--log-csv ${build}/logs/phploc.csv"/>
+            <arg line="source"/>
+        </exec>
+    </target>
+
+</project>

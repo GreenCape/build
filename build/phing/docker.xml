@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Docker related targets for GreenCape build environment
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+
+The "GNU General Public License" (GPL) is available at
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+@package    BuildEnvironment
+@author     Niels Braczek <nbraczek@bsds.de>
+@copyright  Copyright (C) 2015 BSDS Braczek Software- und DatenSysteme. All rights reserved.
+-->
+<project name="Docker Related Targets" default="docker-build">
+
+    <property name="version-cache" value="${build}/versions.json"/>
+    <property name="download-cache" value="${build}/cache"/>
+
+    <filterchain id="expand">
+        <expandproperties/>
+    </filterchain>
+
+    <target name="docker-rm">
+        <delete dir="${server-dockyard}" quiet="true"/>
+        <delete file="${project.basedir}/docker-compose.yml" quiet="true"/>
+    </target>
+
+    <target name="docker-build" depends="docker-rm">
+
+        <!-- Create directories for container contents -->
+        <mkdir dir="${server-dockyard}/nginx/conf"/>
+        <mkdir dir="${server-dockyard}/nginx/html"/>
+        <mkdir dir="${server-dockyard}/apache/conf"/>
+        <mkdir dir="${server-dockyard}/apache/html"/>
+        <mkdir dir="${server-dockyard}/mysql"/>
+        <mkdir dir="${server-dockyard}/postgresql"/>
+
+        <!-- Get available Joomla! versions -->
+        <joomla-versions versionFile="${version-cache}"/>
+
+        <!-- Load database environment, if provided -->
+        <if>
+            <available file="${test-environments}/database.xml" property="unused"/>
+            <then>
+                <xmlproperty file="${test-environments}/database.xml" keepRoot="true" collapseAttributes="true"/>
+            </then>
+        </if>
+
+        <!-- Set default values for keys not defined in database.xml -->
+        <property name="database.mysql.version" value="latest"/>
+        <property name="database.mysql.name" value="joomla_test"/>
+        <property name="database.mysql.user" value="db_user"/>
+        <property name="database.mysql.password" value="db_pass"/>
+        <property name="database.mysql.rootPassword" value=""/>
+        <if>
+            <equals arg1="" arg2="${database.mysql.rootPassword}"/>
+            <then>
+                <property name="database.mysql.password.option" value=""/>
+            </then>
+            <else>
+                <property name="database.mysql.password.option" value="-p'${database.mysql.rootPassword}'"/>
+            </else>
+        </if>
+        <property name="database.postgresql.version" value="latest"/>
+        <property name="database.postgresql.name" value="joomla_test"/>
+        <property name="database.postgresql.user" value="db_user"/>
+        <property name="database.postgresql.password" value="db_pass"/>
+
+        <!-- Prepare database initialization -->
+        <exec command="echo > '${server-dockyard}/postgresql/start.sh'"/>
+
+        <!-- Handle each test environment -->
+        <foreach param="environment-definition" target="docker-build-system">
+            <fileset dir="${test-environments}">
+                <include name="*.xml"/>
+                <exclude name="database.xml"/>
+                <exclude name="default.xml"/>
+            </fileset>
+        </foreach>
+
+        <!-- Add global container files -->
+        <!-- copy file="${build-templates}/mysql/start.sh" tofile="${server-dockyard}/mysql/start.sh" preservemode="true">
+            <filterchain refid="expand"/>
+        </copy -->
+
+        <copy file="${build-templates}/nginx/nginx.conf" tofile="${server-dockyard}/nginx/conf/nginx.conf">
+            <filterchain refid="expand"/>
+        </copy>
+
+        <copy file="${build-templates}/docker-compose.yml" tofile="${project.basedir}/docker-compose.yml">
+            <filterchain refid="expand"/>
+        </copy>
+
+    </target>
+
+    <target name="docker-build-system" hidden="true">
+
+        <php expression="basename('${environment-definition}', '.xml')" returnProperty="target" level="debug"/>
+
+        <!-- Get the environment settings -->
+        <xmlproperty file="${test-environments}/${environment-definition}" keepRoot="true" collapseAttributes="true"/>
+        <property name="environment.name" value="${target}" description="default"/>
+
+        <!-- Supply with default values -->
+        <xmlproperty file="${test-environments}/default.xml" keepRoot="true" collapseAttributes="true"/>
+        <property name="environment.server.type" value="nginx" description="default"/>
+        <property name="environment.server.offset" value="UTC" description="default"/>
+        <property name="environment.cache.enabled" value="0" description="default"/>
+        <property name="environment.cache.time" value="15" description="default"/>
+        <property name="environment.cache.handler" value="file" description="default"/>
+        <property name="environment.debug.system" value="1" description="default"/>
+        <property name="environment.debug.language" value="1" description="default"/>
+        <property name="environment.meta.description" value="Test installation for ${phing.project.name} on Joomla! ${version}" description="default"/>
+        <property name="environment.meta.keywords" value="${phing.project.name} Joomla Test" description="default"/>
+        <property name="environment.meta.showVersion" value="1" description="default"/>
+        <property name="environment.meta.showTitle" value="1" description="default"/>
+        <property name="environment.meta.showAuthor" value="1" description="default"/>
+        <property name="environment.sef.enabled" value="0" description="default"/>
+        <property name="environment.sef.rewrite" value="0" description="default"/>
+        <property name="environment.sef.suffix" value="0" description="default"/>
+        <property name="environment.sef.unicode" value="0" description="default"/>
+        <property name="environment.session.lifetime" value="15" description="default"/>
+        <property name="environment.session.handler" value="database" description="default"/>
+        <property name="environment.joomla.version" value="3" description="default"/>
+        <property name="environment.joomla.sampleData" value="data" description="default"/>
+        <property name="environment.database.driver" value="mysqli" description="default"/>
+        <property name="environment.database.name" value="joomla_test" description="default"/>
+        <property name="environment.database.prefix" value="${target}_" description="default"/>
+        <property name="environment.feeds.limit" value="10" description="default"/>
+        <property name="environment.feeds.email" value="author" description="default"/>
+
+        <property name="domain" value="${environment.name}.dev"/>
+        <property name="htdocs" value="${server-dockyard}/${domain}"/>
+        <if>
+            <or>
+                <equals arg1="mysqli" arg2="${environment.database.driver}"/>
+                <equals arg1="pdomysql" arg2="${environment.database.driver}"/>
+            </or>
+            <then>
+                <property name="environment.database.engine" value="mysql"/>
+            </then>
+            <else>
+                <property name="environment.database.engine" value="${environment.database.driver}"/>
+            </else>
+        </if>
+
+        <!-- Download and unpack the specified Joomla! version -->
+        <mkdir dir="${htdocs}"/>
+        <joomla-download version="${environment.joomla.version}" versionFile="${version-cache}" cachePath="${download-cache}" returnProperty="tarball"/>
+        <untar todir="${htdocs}" file="${tarball}"/>
+        <exec command="ls '${htdocs}' | grep 'joomla'" outputProperty="files"/>
+        <php expression="preg_replace('~^.*?(\d+\.\d+\.\d+)\.tar\.gz$~', '\1', '${tarball}')" returnProperty="version" level="debug"/>
+        <property name="cms-root" value="${server-dockyard}/${environment.server.type}/html/${domain}"/>
+        <move file="${htdocs}/${files}" tofile="${cms-root}"/>
+        <delete dir="${htdocs}" quiet="true"/>
+
+        <!-- Add test files -->
+        <delete dir="${cms-root}/tests" quiet="true"/>
+        <mkdir dir="${cms-root}/tests"/>
+        <copy todir="${cms-root}/tests" includeemptydirs="false">
+            <fileset dir="${tests}">
+                <exclude name="servers/**/*"/>
+            </fileset>
+        </copy>
+
+        <!-- Build the database import script -->
+        <available file="${cms-root}/installation/sql/${environment.database.engine}" type="dir" property="engine_supported"/>
+        <fail unless="engine_supported" message="Joomla! ${version} does not support ${environment.database.engine} databases"/>
+
+        <!-- Get the database info - use global values, if not provided with local environment -->
+        <property name="environment.database.name" value="${database.${environment.database.engine}.name}"/>
+
+        <!-- Gather the database contents -->
+        <property name="coredata" value="${cms-root}/installation/sql/${environment.database.engine}/joomla.sql"/>
+        <property name="sampledata" value="${cms-root}/installation/sql/${environment.database.engine}/sample_${environment.joomla.sampleData}.sql"/>
+        <available file="${sampledata}" property="sampledata_exist"/>
+        <fail unless="sampledata_exist" message="No '${environment.joomla.sampleData}' sample data found for Joomla! ${version} with ${environment.database.engine} database"/>
+        <version-match dir="${build-templates}/${environment.database.engine}" pattern="joomla-(.*).sql" returnProperty="testdata" version="${version}"/>
+        <fail unless="testdata" message="No test data found for Joomla! ${version} with ${environment.database.engine} database"/>
+
+        <echo level="info">
+            Joomla version:  ${version}
+            Domain:          ${domain}
+            Server:          ${environment.server.type}
+
+            Database type:   ${environment.database.engine}:${database.${environment.database.engine}.version} (${environment.database.driver})
+            Database name:   ${environment.database.name}
+            Database prefix: ${environment.database.prefix}
+            Database user:   ${database.${environment.database.engine}.user}:${database.${environment.database.engine}.password}
+        </echo>
+
+        <!-- Build the import.sql file -->
+        <property name="import.sql" value="${server-dockyard}/${environment.database.engine}/${environment.name}.sql"/>
+        <if>
+            <equals arg1="${environment.database.name}" arg2="${database.${environment.database.engine}.name}"/>
+            <then>
+                <touch file="${import.sql}"/>
+            </then>
+
+            <else>
+                <copy file="${build-templates}/${environment.database.engine}/createdb.sql" tofile="${import.sql}">
+                    <filterchain refid="expand"/>
+                </copy>
+            </else>
+        </if>
+        <exec command="cat '${coredata}' >> '${import.sql}'"/>
+        <exec command="cat '${sampledata}' >> '${import.sql}'"/>
+        <exec command="cat '${testdata}' >> '${import.sql}'"/>
+        <exec command="sed -i 's/#__/${environment.database.prefix}/g' '${import.sql}'"/>
+
+        <!-- Prepare database initialization -->
+        <if>
+            <equals arg1="postgresql" arg2="${environment.database.engine}"/>
+            <then>
+                <!-- fix single quote escaping -->
+                <property name="sr" value="s/\\\'/''/g"/>
+                <property name="command" value='sed -i "${sr}" "${import.sql}"'/>
+                <exec command="${command}"/>
+                <exec command="echo 'createdb -U${database.postgresql.user} -O${database.postgresql.user} ${environment.database.name}' >> '${server-dockyard}/postgresql/start.sh'"/>
+                <exec command="echo 'psql -U${database.postgresql.user} -d ${environment.database.name} -f/import.d/${environment.name}.sql' >> '${server-dockyard}/postgresql/start.sh'"/>
+            </then>
+            <elseif>
+                <equals arg1="mysql" arg2="${environment.database.engine}"/>
+                <then>
+                    <!-- Re-format import.sql to match MySQLd init-file restrictions -->
+                    <format-initfile file="${import.sql}"/>
+                </then>
+            </elseif>
+        </if>
+
+        <echo message="Created database import script in ${import.sql}" level="debug"/>
+
+        <!-- Setup web server -->
+        <if>
+            <equals arg1="${environment.server.type}" arg2="nginx"/>
+            <then>
+                <copy file="${build-templates}/nginx/vhost.conf" tofile="${server-dockyard}/nginx/conf/${domain}">
+                    <filterchain refid="expand"/>
+                </copy>
+            </then>
+
+            <elseif>
+                <equals arg1="${environment.server.type}" arg2="apache"/>
+                <then>
+                    <copy file="${build-templates}/apache/vhost.conf" tofile="${server-dockyard}/apache/conf/${domain}.conf">
+                        <filterchain refid="expand"/>
+                    </copy>
+                    <copy file="${build-templates}/nginx/proxy.conf" tofile="${server-dockyard}/nginx/conf/${domain}">
+                        <filterchain refid="expand"/>
+                    </copy>
+                </then>
+            </elseif>
+
+            <else>
+                <fail msg="Server '${environment.server.type}' is not supported"/>
+            </else>
+        </if>
+
+        <!-- Create Joomla! configuration file -->
+        <if>
+            <available file="${cms-root}/installation/configuration.php-dist" property="unused"/>
+            <then>
+                <property name="config-file" value="${cms-root}/installation/configuration.php-dist"/>
+            </then>
+            <else>
+                <property name="config-file" value="${cms-root}/configuration.php-dist"/>
+            </else>
+        </if>
+        <php expression="E_ALL &amp; ~E_STRICT" returnProperty="error-reporting" level="debug"/>
+        <php expression="ucfirst('${environment.server.type}')" returnProperty="pretty.server.name" level="debug"/>
+        <php expression="ucfirst(str_replace('sql', 'SQL', str_replace('my', 'My', '${environment.database.driver}')))" returnProperty="pretty.database.driver" level="debug"/>
+        <property name="p" value="(?:\s*//\s*(.*))?"/>
+        <property name="r" value=" // \3 was: \2"/>
+        <copy file="${config-file}" tofile="${cms-root}/configuration.php">
+            <filterchain>
+                <replaceregexp>
+                    <!-- Site Settings -->
+                    <regexp pattern="(\$sitename\s*=\s*)(.*?);${p}" replace="\1'Joomla! ${version}/${pretty.server.name}/${pretty.database.driver}';${r}"/>
+                    <!-- Database settings -->
+                    <regexp pattern="(\$dbtype\s*=\s*)(.*?);${p}" replace="\1'${environment.database.driver}';${r}"/>
+                    <regexp pattern="(\$host\s*=\s*)(.*?);${p}" replace="\1'${environment.database.engine}';${r}"/>
+                    <regexp pattern="(\$user\s*=\s*)(.*?);${p}" replace="\1'${database.${environment.database.engine}.user}';${r}"/>
+                    <regexp pattern="(\$password\s*=\s*)(.*?);${p}" replace="\1'${database.${environment.database.engine}.password}';${r}"/>
+                    <regexp pattern="(\$db\s*=\s*)(.*?);${p}" replace="\1'${environment.database.name}';${r}"/>
+                    <regexp pattern="(\$dbprefix\s*=\s*)(.*?);${p}" replace="\1'${environment.database.prefix}';${r}"/>
+                    <!-- Server settings -->
+                    <regexp pattern="(\$error_reporting\s*=\s*)(.*?);${p}" replace="\1'${error-reporting}'; // E_ALL &amp; ~E_STRICT was: \2"/>
+                    <!-- Locale settings -->
+                    <regexp pattern="(\$offset\s*=\s*)(.*?);${p}" replace="\1'${environment.server.offset}';${r}"/>
+                    <!-- Session settings -->
+                    <regexp pattern="(\$lifetime\s*=\s*)(.*?);${p}" replace="\1'${environment.session.lifetime}';${r}"/>
+                    <regexp pattern="(\$session_handler\s*=\s*)(.*?);${p}" replace="\1'${environment.session.handler}';${r}"/>
+                    <!-- Mail settings -->
+                    <regexp pattern="(\$mailer\s*=\s*)(.*?);${p}" replace="\1'smtp';${r}"/>
+                    <regexp pattern="(\$mailfrom\s*=\s*)(.*?);${p}" replace="\1'admin@${domain}';${r}"/>
+                    <regexp pattern="(\$fromname\s*=\s*)(.*?);${p}" replace="\1'Joomla! ${version}/${pretty.server.name}/${pretty.database.driver}';${r}"/>
+                    <regexp pattern="(\$sendmail\s*=\s*)(.*?);${p}" replace="\1'/usr/bin/env catchmail';${r}"/>
+                    <regexp pattern="(\$smtpauth\s*=\s*)(.*?);${p}" replace="\1'0';${r}"/>
+                    <regexp pattern="(\$smtpuser\s*=\s*)(.*?);${p}" replace="\1'';${r}"/>
+                    <regexp pattern="(\$smtppass\s*=\s*)(.*?);${p}" replace="\1'';${r}"/>
+                    <regexp pattern="(\$smtphost\s*=\s*)(.*?);${p}" replace="\1'localhost:1025';${r}"/>
+                    <regexp pattern="(\$smtpsecure\s*=\s*)(.*?);${p}" replace="\1'none';${r}"/>
+                    <!-- Cache settings -->
+                    <regexp pattern="(\$caching\s*=\s*)(.*?);${p}" replace="\1'${environment.cache.enabled}';${r}"/>
+                    <regexp pattern="(\$cachetime\s*=\s*)(.*?);${p}" replace="\1'${environment.cache.time}';${r}"/>
+                    <regexp pattern="(\$cache_handler\s*=\s*)(.*?);${p}" replace="\1'${environment.cache.handler}';${r}"/>
+                    <!-- Debug settings -->
+                    <regexp pattern="(\$debug\s*=\s*)(.*?);${p}" replace="\1'${environment.debug.system}';${r}"/>
+                    <regexp pattern="(\$debug_db\s*=\s*)(.*?);${p}" replace="\1'${environment.debug.system}';${r}"/>
+                    <regexp pattern="(\$debug_lang\s*=\s*)(.*?);${p}" replace="\1'${environment.debug.language}';${r}"/>
+                    <!-- Meta settings -->
+                    <regexp pattern="(\$MetaDesc\s*=\s*)(.*?);${p}" replace="\1'${environment.meta.description}';${r}"/>
+                    <regexp pattern="(\$MetaKeys\s*=\s*)(.*?);${p}" replace="\1'${environment.meta.keywords}';${r}"/>
+                    <regexp pattern="(\$MetaTitle\s*=\s*)(.*?);${p}" replace="\1'${environment.meta.showTitle}';${r}"/>
+                    <regexp pattern="(\$MetaAuthor\s*=\s*)(.*?);${p}" replace="\1'${environment.meta.showAuthor}';${r}"/>
+                    <regexp pattern="(\$MetaVersion\s*=\s*)(.*?);${p}" replace="\1'${environment.meta.showVersion}';${r}"/>
+                    <!-- SEO settings -->
+                    <regexp pattern="(\$sef\s*=\s*)(.*?);${p}" replace="\1'${environment.sef.enabled}';${r}"/>
+                    <regexp pattern="(\$sef_rewrite\s*=\s*)(.*?);${p}" replace="\1'${environment.sef.rewrite}';${r}"/>
+                    <regexp pattern="(\$sef_suffix\s*=\s*)(.*?);${p}" replace="\1'${environment.sef.suffix}';${r}"/>
+                    <regexp pattern="(\$unicodeslugs\s*=\s*)(.*?);${p}" replace="\1'${environment.sef.unicode}';${r}"/>
+                    <!-- Feed settings -->
+                    <regexp pattern="(\$feed_limit\s*=\s*)(.*?);${p}" replace="\1'${environment.feeds.limit}';${r}"/>
+                    <regexp pattern="(\$feed_email\s*=\s*)(.*?);${p}" replace="\1'${environment.feeds.email}';${r}"/>
+
+                </replaceregexp>
+            </filterchain>
+        </copy>
+
+        <!-- Remove installation folder -->
+        <!-- delete dir="${cms-root}/installation"/ -->
+
+    </target>
+
+    <target name="docker-start" depends="docker-build">
+        <exec command="docker-compose up -d"/>
+    </target>
+
+    <target name="docker-stop">
+        <echo message="Stopping containers ..."/>
+        <exec command="docker-compose stop"/>
+        <echo message="... waiting 2 seconds ..."/>
+        <exec command="sleep 2"/>
+        <echo message="... removing ..."/>
+        <exec command="docker-compose rm --force"/>
+        <echo message="... done."/>
+    </target>
+
+    <target name="srtest">
+        <property name="import.sql" value="${server-dockyard}/mysql/j25-latest.sql"/>
+        <format-initfile file="${import.sql}" level="info"/>
+    </target>
+
+</project>

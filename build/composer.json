@@ -1,0 +1,12 @@
+{
+  "require": {
+    "php": ">=5.3.3"
+  },
+  "require-dev": {
+    "phing/phing": ">=2.8",
+    "phpunit/phpunit": "~3.7",
+    "phpunit/php-invoker": "~1.1",
+    "phpunit/dbunit": ">=1.2",
+    "phpunit/phpunit-selenium": ">=1.2"
+  }
+}

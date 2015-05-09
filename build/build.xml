@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Celtic Database" default="build" basedir="../">
+
+    <import file="${project.basedir}/build/phing/setup.xml"/>
+    <import file="${build}/phing/docker.xml"/>
+    <import file="${build}/phing/metrics.xml"/>
+    <import file="${build}/phing/document.xml"/>
+
+    <property name="package.type" value="com_"/>
+    <property name="package.name" value="sql"/>
+    <property name="package.version" value="1.0.0"/>
+
+    <property name="qat.coverage" value="${build}/bin/qat-coverage.php"/>
+    <property name="qat-selenium.binary" value="${build}/bin/qat-selenium.php"/>
+    <property name="selenium.binary" value="${project.basedir}/vendor/se/selenium-server-standalone/composer/bin/selenium-server-standalone.jar"/>
+
+    <property name="test.basedir" value="/home/nibra/Development"/>
+    <property name="test.environments" value="j3-mysql, j3-postgresql, j25-latest, j15-latest"/>
+
+    <property name="dist.basedir" value="${project.basedir}/dist/${package.type}${package.name}-${package.version}"/>
+
+    <property name="php.host" value="php"/>
+    <property name="php.port" value="9000"/>
+
+    <!-- supported generators: phpdocumentor2, apigen -->
+    <property name="apidoc.generator" value="apigen"/>
+    <property name="apidoc.title" value="${phing.project.name} ${package.version} API Documentation"/>
+
+    <xmlproperty file="${source}/installation/${package.name}.xml" prefix="package" keepRoot="false"/>
+
+    <fileset dir="${source}" id="source-files">
+        <include name="**/*"/>
+    </fileset>
+    <fileset dir="${source}" id="php-files">
+        <include name="**/*.php"/>
+    </fileset>
+    <fileset dir="${source}" id="xml-files">
+        <include name="**/*.xml"/>
+    </fileset>
+    <fileset dir="${integration-tests}" id="integration-test-files">
+        <include name="**/*"/>
+    </fileset>
+    <fileset dir="${dist.basedir}" id="dist-files">
+        <include name="**/*"/>
+    </fileset>
+
+    <target name="build" depends="prepare, test, quality, document"/>
+
+    <target name="clean" description="Cleanup artifact directories">
+        <delete dir="${build}/api" quiet="true"/>
+        <delete dir="${build}/code-browser" quiet="true"/>
+        <delete dir="${build}/coverage" quiet="true"/>
+        <delete dir="${build}/logs" quiet="true"/>
+        <delete dir="${build}/charts" quiet="true"/>
+    </target>
+
+    <target name="prepare" depends="clean" description="Create artifact directories">
+        <mkdir dir="${build}/api"/>
+        <mkdir dir="${build}/code-browser"/>
+        <mkdir dir="${build}/coverage"/>
+        <mkdir dir="${build}/logs"/>
+        <mkdir dir="${build}/charts"/>
+    </target>
+
+    <target name="phpab" description="Generate autoload script">
+        <foreach list="administrator/components/, components" target="create-autoloader" param="target"/>
+        <exec command="phpab --tolerant --basedir . --output autoload.php mocks" dir="${tests}" passthru="true"/>
+        <exec command="phpab --tolerant --basedir ${system-tests} --template ${system-tests}/autoload.php.in --output ${system-tests}/autoload.php ${build}/Selenium" dir="${project.basedir}" passthru="true"/>
+    </target>
+
+    <target name="create-patch-set" depends="phpab">
+        <property name="patchset.location" value="dist/${package.type}${package.name}-${package.version}-full" override="true" />
+        <uptodate property="patchset.status" targetfile="${patchset.location}" value="uptodate">
+            <fileset refid="source-files"/>
+        </uptodate>
+        <if>
+            <equals arg1="${patchset.status}" arg2="uptodate"/>
+            <then>
+                <echo message="Patchset ${patchset.location} is uptodate" level="info"/>
+            </then>
+            <else>
+                <delete dir="${patchset.location}" quiet="true"/>
+                <copy todir="${patchset.location}">
+                    <fileset dir="${source}">
+                        <exclude name="installation/"/>
+                    </fileset>
+                </copy>
+            </else>
+        </if>
+    </target>
+
+    <target name="create-autoloader" hidden="true">
+        <if>
+            <available file="${source}/${target}" property="exists"/>
+            <then>
+                <exec executable="phpab" dir="${source}/${target}/${package.type}${package.name}" passthru="true">
+                    <arg line="--tolerant"/>
+                    <arg line="--basedir ."/>
+                    <arg line="--output autoload.php"/>
+                    <arg line="--template autoload.php.in"/>
+                    <arg path="../"/>
+                </exec>
+            </then>
+        </if>
+    </target>
+
+    <!-- Managing test installations -->
+
+    <target name="inst-stash" description="Stash the current situation on a test installation" hidden="true">
+        <exec command="git checkout master" dir="${test.basedir}/${target}" checkreturn="true" passthru="true"/>
+        <exec command="git stash" dir="${test.basedir}/${target}" checkreturn="true" passthru="true"/>
+        <exec command="git checkout -B test master" dir="${test.basedir}/${target}" checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="inst-copy" description="Copy the AUT and the tests to a test installation" hidden="true">
+        <copy todir="${test.basedir}/${target}/source" overwrite="true">
+            <fileset dir="${patchset.location}" expandsymboliclinks="true">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <copy todir="${test.basedir}/${target}/tests" overwrite="true">
+            <fileset dir="${tests}" expandsymboliclinks="true">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="inst-install" description="Install the AUT on a test installation" hidden="true">
+        <echo message="Installing ${phing.project.name} version ${package.version} on ${target}"/>
+        <exec executable="${build}/bin/joomla.php" passthru="true">
+            <arg line="install --ansi -vvv --basepath='${test.basedir}/${target}/source' '${dist.basedir}.zip'"/>
+        </exec>
+    </target>
+
+    <target name="inst-unstash" description="Unstash everything on a test installation" hidden="true">
+        <exec command="git clean --force -d" dir="${test.basedir}/${target}" passthru="true"/>
+        <exec command="git checkout master" dir="${test.basedir}/${target}" passthru="true"/>
+        <exec command="git stash pop" dir="${test.basedir}/${target}" passthru="true"/>
+        <exec command="git branch -d test" dir="${test.basedir}/${target}" passthru="true"/>
+    </target>
+
+    <target name="inst-restore" description="Completely reset a test installation including database" hidden="true">
+        <exec command="phing restore" dir="${test.basedir}/${target}"/>
+    </target>
+
+
+    <!-- Documenting -->
+
+
+    <!-- Selenium Server -->
+
+    <target name="selenium-start">
+        <exec command="'${qat-selenium.binary}' start --jar ${selenium.binary}" passthru="true"/>
+    </target>
+
+    <target name="selenium-status">
+        <exec command="'${qat-selenium.binary}' status" passthru="true"/>
+    </target>
+
+    <target name="selenium-stop">
+        <exec command="'${qat-selenium.binary}' stop" passthru="true"/>
+    </target>
+
+    <target name="selenium-restart" depends="">
+        <exec command="'${qat-selenium.binary}' restart --jar  ${selenium.binary}" passthru="true"/>
+    </target>
+
+    <!-- Testing -->
+
+    <target name="test" depends="test-unit, test-integration-all, test-system-all, test-coverage-report" description="Run both extension and installation tests"/>
+
+    <target name="test-unit" depends="phpab" description="Run unit tests">
+        <exec command="phpunit" dir="${unit-tests}" passthru="true"/>
+    </target>
+
+    <target name="test-integration-all" depends="create-patch-set" description="Run integrations tests on all test installations">
+        <foreach list="${test.environments}" param="target" target="test-integration"/>
+    </target>
+
+    <target name="test-integration-ask" depends="create-patch-set">
+        <echo>Choose a test installation:</echo>
+
+        <input message="Test installation" propertyName="target" validArgs="${test.environments}"/>
+        <phingcall target="test-integration" inheritAll="true"/>
+    </target>
+
+    <target name="test-integration" description="Run integrations tests on a single test installation" hidden="true">
+        <uptodate property="log.status" targetfile="${build}/logs/${target}/clover.serialized" value="uptodate">
+            <fileset refid="source-files"/>
+            <fileset refid="integration-test-files"/>
+        </uptodate>
+        <if>
+            <equals arg1="${log.status}" arg2="uptodate"/>
+            <then>
+                <echo message="Integration test for ${target} is up to date - skipping." level="info"/>
+            </then>
+            <else>
+                <trycatch property="error">
+                    <try>
+                        <delete dir="${build}/logs/${target}" quiet="true"/>
+
+                        <echo message="Preparing ${target}" level="info"/>
+                        <phingcall target="inst-stash" inheritAll="true"/>
+                        <phingcall target="inst-copy" inheritAll="true"/>
+
+                        <echo message="Integration test on ${target}" level="info"/>
+                        <mkdir dir="${test.basedir}/${target}/build/logs"/>
+
+                        <echo message="Administrator (Backend)"/>
+                        <exec executable="phpunit" dir="${test.basedir}/${target}/tests" checkreturn="true" passthru="true">
+                            <arg line="--configuration"/><arg path="administrator.xml"/>
+                        </exec>
+
+                        <echo message="Site (Frontend)"/>
+                        <exec executable="phpunit" dir="${test.basedir}/${target}/tests" checkreturn="true" passthru="true">
+                            <arg line="--configuration"/><arg path="site.xml"/>
+                        </exec>
+
+                        <copy todir="${build}/logs/${target}">
+                            <fileset dir="${test.basedir}/${target}/build/logs" expandsymboliclinks="true">
+                                <include name="**/*.*"/>
+                            </fileset>
+                        </copy>
+                    </try>
+                    <catch>
+                        <echo message="Failed. ${error}" level="error"/>
+                    </catch>
+                    <finally>
+                        <phingcall target="inst-unstash" inheritAll="true"/>
+                    </finally>
+                </trycatch>
+            </else>
+        </if>
+    </target>
+
+    <target name="test-system-all" depends="dist-prepare, selenium-start" description="Run system tests on all test installations">
+        <delete dir="${build}/screenshots"/>
+        <mkdir dir="${build}/screenshots"/>
+        <foreach list="${test.environments}" param="target" target="test-system"/>
+    </target>
+
+    <target name="test-system-ask" depends="dist-prepare, selenium-start">
+        <echo>Choose a test installation:</echo>
+
+        <input propertyName="target" validArgs="${test.environments}">
+            Test installation
+        </input>
+        <delete dir="${build}/screenshots"/>
+        <mkdir dir="${build}/screenshots"/>
+        <phingcall target="test-system" inheritAll="true"/>
+    </target>
+
+    <target name="test-system" description="Run system tests on a single test installation" hidden="true">
+        <trycatch property="error">
+            <try>
+                <echo message="System test for ${target} on ${test.${target}.url}" level="info"/>
+                <phingcall target="inst-stash" inheritAll="true"/>
+                <phingcall target="inst-restore" inheritAll="true"/>
+                <exec command="phing systest-start" dir="${test.basedir}/${target}" passthru="true"/>
+
+                <copy tofile="/home/nibra/public_html/${package.type}${package.name}-${package.version}.zip"
+                      file="${project.basedir}/dist/${package.type}${package.name}-${package.version}.zip"/>
+
+                <delete file="${system-tests}/phpunit.xml" quiet="true"/>
+                <copy tofile="${system-tests}/phpunit.xml" file="${system-tests}/phpunit.xml.in">
+                    <filterchain>
+                        <replacetokens>
+                            <token key="test-url" value="${test.${target}.url}" />
+                            <token key="target" value="${target}" />
+                        </replacetokens>
+                    </filterchain>
+                </copy>
+                <exec executable="phpunit" dir="${system-tests}" checkreturn="true" passthru="true">
+                </exec>
+            </try>
+            <catch>
+                <echo message="Failed. ${error}" level="error"/>
+            </catch>
+            <finally>
+                <copy todir="${build}/logs/${target}" overwrite="true">
+                    <fileset dir="${test.basedir}/${target}/build/coverage-data" expandsymboliclinks="true">
+                        <include name="**/*" />
+                    </fileset>
+                </copy>
+                <delete file="${system-tests}/phpunit.xml"/>
+                <exec command="phing systest-stop" dir="${test.basedir}/${target}" passthru="true"/>
+                <phingcall target="inst-unstash" inheritAll="true"/>
+            </finally>
+        </trycatch>
+    </target>
+
+    <target name="test-coverage-report" description="Create an HTML coverage report">
+        <exec executable="${qat.coverage}" passthru="true">
+            <arg line="-f"/><arg path="${build}/logs/clover.serialized"/>
+            <!-- @todo Make declaration of other clover files dynamic -->
+            <arg line="-f"/><arg path="${build}/logs/J3-latest/administrator.clover.serialized"/>
+            <arg line="-f"/><arg path="${build}/logs/J3-latest/site.clover.serialized"/>
+            <arg line="-f"/><arg path="${build}/logs/J3-latest/system.clover.serialized"/>
+            <arg line="-f"/><arg path="${build}/logs/J25-latest/administrator.clover.serialized"/>
+            <arg line="-f"/><arg path="${build}/logs/J25-latest/site.clover.serialized"/>
+            <arg line="-f"/><arg path="${build}/logs/J25-latest/system.clover.serialized"/>
+            <arg line="-f"/><arg path="${build}/logs/J15-latest/administrator.clover.serialized"/>
+            <arg line="-f"/><arg path="${build}/logs/J15-latest/site.clover.serialized"/>
+            <arg line="-f"/><arg path="${build}/logs/J15-latest/system.clover.serialized"/>
+            <arg line="-t"/><arg path="${build}/coverage"/>
+        </exec>
+    </target>
+
+    <!-- Installation on target systems -->
+
+    <target name="sys-install-all" depends="dist-prepare">
+        <foreach list="${test.environments}" param="target" target="inst-install"/>
+    </target>
+
+    <target name="sys-install-ask" depends="dist-prepare">
+        <echo>Choose a test installation:</echo>
+
+        <input message="Test installation" propertyName="target" validArgs="${test.environments}"/>
+        <phingcall target="inst-install" inheritAll="true"/>
+    </target>
+
+    <target name="sys-reset-all" description="Reset the installations to the 'testbase' tag and restore the database">
+        <echo>
+            Going to reset the test installations ${test.environments}.
+            This will take a couple of minutes due to the restoration of the databases.
+        </echo>
+        <foreach list="${test.environments}" param="target" target="inst-restore"/>
+    </target>
+
+    <target name="sys-reset-ask">
+        <echo>Choose a test installation:</echo>
+
+        <input message="Test installation" propertyName="target" validArgs="${test.environments}"/>
+        <phingcall target="inst-restore" inheritAll="true"/>
+    </target>
+
+    <!-- Distribution package -->
+
+    <target name="dist" depends="build, dist-prepare" description="Generate the distribution">
+        <zip destfile="dist/${package.type}${package.name}-${package.version}.zip">
+            <fileset refid="dist-files"/>
+        </zip>
+        <tar destfile="dist/${package.type}${package.name}-${package.version}.tar.gz" compression="gzip">
+            <fileset refid="dist-files"/>
+        </tar>
+        <tar destfile="dist/${package.type}${package.name}-${package.version}.tar.bz2" compression="bzip2">
+            <fileset refid="dist-files"/>
+        </tar>
+    </target>
+
+    <target name="dist-clean" description="Cleanup distribution directory">
+        <delete dir="${project.basedir}/dist" quiet="true"/>
+    </target>
+
+    <target name="dist-prepare" depends="phpab, dist-clean" description="Create distribution directory">
+        <!--
+        Installation files
+        -->
+        <mkdir dir="${dist.basedir}"/>
+        <copy todir="${dist.basedir}">
+            <fileset dir="${source}/installation">
+                <include name="*.php"/>
+                <include name="*.xml"/>
+            </fileset>
+            <fileset dir="${project.basedir}">
+                <include name="*.md"/>
+            </fileset>
+        </copy>
+        <!--
+        Admin component
+        -->
+        <mkdir dir="${dist.basedir}/${package.administration.files(folder)}"/>
+        <copy todir="${dist.basedir}/${package.administration.files(folder)}">
+            <filelist dir="${source}/administrator/components/${package.type}${package.name}" files="${package.administration.files.folder}"/>
+            <filelist dir="${source}/administrator/components/${package.type}${package.name}" files="${package.administration.files.filename}"/>
+        </copy>
+        <!--
+        Admin language
+        -->
+        <mkdir dir="${dist.basedir}/${package.administration.languages(folder)}"/>
+        <copy todir="${dist.basedir}/${package.administration.languages(folder)}">
+            <fileset dir="${source}/administrator/language">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- @todo Add frontend files -->
+        <zip destfile="dist/${package.type}${package.name}-${package.version}.zip">
+            <fileset refid="dist-files"/>
+        </zip>
+    </target>
+
+    <!-- Joomla CLI -->
+
+    <target name="jcli-autoload">
+        <exec executable="phpab" dir="${build}/bin/joomla">
+            <arg line="--basedir ."/>
+            <arg line="--output autoload.php"/>
+            <arg line="--template autoload.php.in"/>
+            <arg path="../"/>
+        </exec>
+    </target>
+
+</project>

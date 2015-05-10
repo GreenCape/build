@@ -1,7 +1,0 @@
-/build/cache
-/build/composer.lock
-/build/servers
-/build/vendor
-/build/versions.json
-/docker-compose.yml
-/tests/servers/*.xml

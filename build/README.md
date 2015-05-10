@@ -20,9 +20,9 @@ to that CMS.
 
 In order to use this build and test environment, you need to have
 
-  - [Composer][composer]
-  - [Docker][docker]
-  - [Docker-Compose][fig]
+  - [Composer][composer], a dependency manager for PHP
+  - [Docker][docker] for lightweight container virtualization
+  - [Docker-Compose][fig], a Docker orchestration tool
 
 properly installed on your development system. Everything else will be retrieved automatically when it is needed.
 
@@ -67,6 +67,34 @@ Build the containers and run them in the background.
 Stop and remove the containers.
 
 ## Directory Layouts
+
+When using this build and test environment, your directory layout looks like this:
+
+    <project>/                     # Your project's root directory
+     +- build/                     # Build related files
+     |   +- cache/                 # [gen] Cache for downloaded Joomla! versions
+     |   +- config/                # Configuration files 
+     |   +- docker/                # Definition of individual Docker images
+     |   |   +- mariadb/
+     |   +- phing/                 # Phing related files 
+     |   |   +- tasks/             # Custom tasks for Phing
+     |   |   +- *.xml              # Build target definitions, included by build.xml
+     |   |   +- tasks.properties   # Task properties, included by build.xml
+     |   +- servers/               # [gen] Volumes and configuration files for the Docker containers
+     |   +- template/              # Templates for container files
+     |   +- vendor/                # [gen] Dependencies installed by Composer
+     |   +- build.xml              # The main build file
+     |   +- composer.json          # Description of the dependencies
+     |   +- composer.lock          # [gen] Composer lock file
+     |   +- README.md              # This file
+     |   +- version.json           # [gen] Available Joomla! versions
+     +- dist/                      # [gen] Your project's distribution packages
+     +- docs/                      # Your project's documentation
+     +- source/                    # Your project's source 
+     +- tests/                     # Your project's test sources 
+     +- docker-compose.yml         # [gen] Description of container orchestration
+
+The marker `[gen]` denotes files and directories that will be generated during the build process when needed.
 
 ### Source Directory Layout
 

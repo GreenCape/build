@@ -23,13 +23,30 @@ In order to use this build and test environment, you need to have
   - [Composer][composer], a dependency manager for PHP
   - [Docker][docker] for lightweight container virtualization
   - [Docker-Compose][fig], a Docker orchestration tool
+  - [DNSmasq][dnsmasq], a local lightweight DNS server
 
 properly installed on your development system. Everything else will be retrieved automatically when it is needed.
 
 [composer]: https://getcomposer.org/ "Dependency Manager for PHP"
 [docker]: https://www.docker.com/ "Container Virtualization"
 [fig]: https://www.docker.com/ "Docker Orchestration Tool"
+[dnsmasq]: http://www.thekelleys.org.uk/dnsmasq/doc.html "Local DNS Server"
 
+### Configuration of DNSmasq
+
+To route all requests for `*.dev` domains to localhost, add the line
+
+    address=/dev/127.0.0.1
+    
+to the DNSmasq configuration. This is best done in its own file named `dev` in the `/etc/dnsmasq.d` directory (for Ubuntu).
+You may add it to `/etc/dnsmasq.conf` directly instead, if you want. It is set up correctly, if the output of
+
+    dig *.dev
+    
+contains the lines
+
+    ;; ANSWER SECTION:
+    *.dev.			0	IN	A	127.0.0.1
 
 ### Preparation of the build and test environment
 
@@ -56,7 +73,7 @@ root directory to manage and link the containers.
 
 #### docker-rm
 
-Remove the containers, which where built with `docker-build`.
+Remove the containers, which were built with `docker-build`.
 
 #### docker-start
 
@@ -70,29 +87,29 @@ Stop and remove the containers.
 
 When using this build and test environment, your directory layout looks like this:
 
-    <project>/                     # Your project's root directory
-     +- build/                     # Build related files
-     |   +- cache/                 # [gen] Cache for downloaded Joomla! versions
-     |   +- config/                # Configuration files 
-     |   +- docker/                # Definition of individual Docker images
-     |   |   +- mariadb/
-     |   +- phing/                 # Phing related files 
-     |   |   +- tasks/             # Custom tasks for Phing
-     |   |   +- *.xml              # Build target definitions, included by build.xml
-     |   |   +- tasks.properties   # Task properties, included by build.xml
-     |   +- servers/               # [gen] Volumes and configuration files for the Docker containers
-     |   +- template/              # Templates for container files
-     |   +- vendor/                # [gen] Dependencies installed by Composer
-     |   +- build.xml              # The main build file
-     |   +- composer.json          # Description of the dependencies
-     |   +- composer.lock          # [gen] Composer lock file
-     |   +- README.md              # This file
-     |   +- version.json           # [gen] Available Joomla! versions
-     +- dist/                      # [gen] Your project's distribution packages
-     +- docs/                      # Your project's documentation
-     +- source/                    # Your project's source 
-     +- tests/                     # Your project's test sources 
-     +- docker-compose.yml         # [gen] Description of container orchestration
+    <project>/                      # Your project's root directory
+     +- build/                      # Build related files
+     |   +- cache/                  # [gen] Cache for downloaded Joomla! versions
+     |   +- config/                 # Configuration files 
+     |   +- docker/                 # Definition of individual Docker images
+     |   |   +- mariadb/ 
+     |   +- phing/                  # Phing related files 
+     |   |   +- tasks/              # Custom tasks for Phing
+     |   |   +- *.xml               # Build target definitions, included by build.xml
+     |   |   +- tasks.properties    # Task properties, included by build.xml
+     |   +- servers/                # [gen] Volumes and configuration files for the Docker containers
+     |   +- template/               # Templates for container files
+     |   +- vendor/                 # [gen] Dependencies installed by Composer
+     |   +- build.xml               # The main build file
+     |   +- composer.json           # Description of the dependencies
+     |   +- composer.lock           # [gen] Composer lock file
+     |   +- README.md               # This file
+     |   +- version.json            # [gen] Available Joomla! versions
+     +- dist/                       # [gen] Your project's distribution packages
+     +- docs/                       # Your project's documentation
+     +- source/                     # Your project's source 
+     +- tests/                      # Your project's test sources 
+     +- docker-compose.yml          # [gen] Description of container orchestration
 
 The marker `[gen]` denotes files and directories that will be generated during the build process when needed.
 

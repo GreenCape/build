@@ -111,6 +111,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <xmlproperty file="${test-environments}/default.xml" keepRoot="true" collapseAttributes="true"/>
         <property name="environment.server.type" value="nginx" description="default"/>
         <property name="environment.server.offset" value="UTC" description="default"/>
+        <property name="environment.server.tld" value="dev" description="default"/>
         <property name="environment.cache.enabled" value="0" description="default"/>
         <property name="environment.cache.time" value="15" description="default"/>
         <property name="environment.cache.handler" value="file" description="default"/>
@@ -135,7 +136,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <property name="environment.feeds.limit" value="10" description="default"/>
         <property name="environment.feeds.email" value="author" description="default"/>
 
-        <property name="domain" value="${environment.name}.dev"/>
+        <property name="domain" value="${environment.name}.${environment.server.tld}"/>
         <property name="htdocs" value="${server-dockyard}/${domain}"/>
         <if>
             <or>

@@ -45,6 +45,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <mkdir dir="${server-dockyard}/nginx/html"/>
         <mkdir dir="${server-dockyard}/apache/conf"/>
         <mkdir dir="${server-dockyard}/apache/html"/>
+        <mkdir dir="${server-dockyard}/proxy/conf"/>
         <mkdir dir="${server-dockyard}/mysql"/>
         <mkdir dir="${server-dockyard}/postgresql"/>
 
@@ -241,30 +242,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <echo message="Created database import script in ${import.sql}" level="debug"/>
 
         <!-- Setup web server -->
-        <if>
-            <equals arg1="${environment.server.type}" arg2="nginx"/>
-            <then>
-                <copy file="${build-templates}/nginx/vhost.conf" tofile="${server-dockyard}/nginx/conf/${domain}">
-                    <filterchain refid="expand"/>
-                </copy>
-            </then>
-
-            <elseif>
-                <equals arg1="${environment.server.type}" arg2="apache"/>
-                <then>
-                    <copy file="${build-templates}/apache/vhost.conf" tofile="${server-dockyard}/apache/conf/${domain}.conf">
-                        <filterchain refid="expand"/>
-                    </copy>
-                    <copy file="${build-templates}/nginx/proxy.conf" tofile="${server-dockyard}/nginx/conf/${domain}">
-                        <filterchain refid="expand"/>
-                    </copy>
-                </then>
-            </elseif>
-
-            <else>
-                <fail msg="Server '${environment.server.type}' is not supported"/>
-            </else>
-        </if>
+        <copy file="${build-templates}/${environment.server.type}/vhost.conf" tofile="${server-dockyard}/${environment.server.type}/conf/${domain}.conf">
+            <filterchain refid="expand"/>
+        </copy>
+        <copy file="${build-templates}/${environment.server.type}/proxy.conf" tofile="${server-dockyard}/proxy/conf/${domain}.conf">
+            <filterchain refid="expand"/>
+        </copy>
 
         <!-- Create Joomla! configuration file -->
         <if>

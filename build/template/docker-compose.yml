@@ -3,8 +3,6 @@ apache:
   volumes:
     - ${server-dockyard}/apache/conf:/etc/apache2/sites-enabled
     - ${server-dockyard}/apache/html:/var/www/html
-  ports:
-    - "8080:8080"
   environment:
     DISTFILES: $DISTFILES
   links:
@@ -16,14 +14,22 @@ nginx:
   volumes:
     - ${server-dockyard}/nginx/conf:/etc/nginx/conf.d
     - ${server-dockyard}/nginx/html:/var/www/html
-  ports:
-    - "80:80"
   environment:
     DISTFILES: $DISTFILES
   links:
     - mysql
     - pgsql
     - php
+
+proxy:
+  build: ${build}/docker/nginx-proxy
+  volumes:
+    - ${server-dockyard}/proxy/conf:/etc/nginx/conf.d
+  ports:
+    - "80:80"
+  links:
+    - apache:web_apache
+    - nginx:web_nginx
 
 php:
   image: php:5.6-fpm

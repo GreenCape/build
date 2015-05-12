@@ -33,6 +33,8 @@ proxy:
 
 php:
   image: php:5.6-fpm
+  volumes:
+    - ${server-dockyard}/nginx/html:/var/www/html
   ports:
     - "9000:9000"
 

@@ -35,7 +35,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <target name="docker-rm">
         <delete dir="${server-dockyard}" quiet="true"/>
-        <delete file="${project.basedir}/docker-compose.yml" quiet="true"/>
     </target>
 
     <target name="docker-build" depends="docker-rm">
@@ -89,12 +88,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             </fileset>
         </foreach>
 
-        <!-- Add global container files -->
-        <copy file="${build-templates}/nginx/nginx.conf" tofile="${server-dockyard}/nginx/conf/nginx.conf">
-            <filterchain refid="expand"/>
-        </copy>
-
-        <copy file="${build-templates}/docker-compose.yml" tofile="${project.basedir}/docker-compose.yml">
+        <copy file="${build-templates}/docker-compose.yml" tofile="${server-dockyard}/docker-compose.yml">
             <filterchain refid="expand"/>
         </copy>
 
@@ -259,7 +253,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <property name="config-file" value="${cms-root}/configuration.php-dist"/>
             </else>
         </if>
-        <php expression="E_ALL &amp; ~E_STRICT" returnProperty="error-reporting" level="debug"/>
         <php expression="ucfirst('${environment.server.type}')" returnProperty="pretty.server.name" level="debug"/>
         <php expression="ucfirst(str_replace('sql', 'SQL', str_replace('my', 'My', '${environment.database.driver}')))" returnProperty="pretty.database.driver" level="debug"/>
         <property name="p" value="(?:\s*//\s*(.*))?"/>
@@ -277,7 +270,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                     <regexp pattern="(\$db\s*=\s*)(.*?);${p}" replace="\1'${environment.database.name}';${r}"/>
                     <regexp pattern="(\$dbprefix\s*=\s*)(.*?);${p}" replace="\1'${environment.database.prefix}';${r}"/>
                     <!-- Server settings -->
-                    <regexp pattern="(\$error_reporting\s*=\s*)(.*?);${p}" replace="\1'${error-reporting}'; // E_ALL &amp; ~E_STRICT was: \2"/>
+                    <regexp pattern="(\$error_reporting\s*=\s*)(.*?);${p}" replace="\1E_ALL &amp; ~E_STRICT &amp; ~E_DEPRECATED;${r}"/>
                     <!-- Locale settings -->
                     <regexp pattern="(\$offset\s*=\s*)(.*?);${p}" replace="\1'${environment.server.offset}';${r}"/>
                     <!-- Session settings -->
@@ -321,7 +314,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </copy>
 
         <!-- Remove installation folder -->
-        <!-- delete dir="${cms-root}/installation"/ -->
+        <delete dir="${cms-root}/installation"/>
+        <exec command='chmod -R 0777 "${cms-root}"'/>
 
     </target>
 
@@ -330,18 +324,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="docker-stop">
-        <echo message="Stopping containers ..."/>
         <exec command="docker-compose stop"/>
-        <echo message="... waiting 2 seconds ..."/>
         <exec command="sleep 2"/>
-        <echo message="... removing ..."/>
         <exec command="docker-compose rm --force"/>
-        <echo message="... done."/>
-    </target>
-
-    <target name="srtest">
-        <property name="import.sql" value="${server-dockyard}/mysql/j25-latest.sql"/>
-        <format-initfile file="${import.sql}" level="info"/>
     </target>
 
 </project>

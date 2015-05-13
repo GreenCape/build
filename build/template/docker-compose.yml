@@ -1,5 +1,5 @@
 apache:
-  image: php:5.6-apache
+  build: ${build}/docker/apache
   volumes:
     - ${server-dockyard}/apache/conf:/etc/apache2/sites-enabled
     - ${server-dockyard}/apache/html:/var/www/html
@@ -17,8 +17,6 @@ nginx:
   environment:
     DISTFILES: $DISTFILES
   links:
-    - mysql
-    - pgsql
     - php
 
 proxy:
@@ -32,11 +30,12 @@ proxy:
     - nginx:web_nginx
 
 php:
-  image: php:5.6-fpm
+  build: ${build}/docker/php-fpm
   volumes:
     - ${server-dockyard}/nginx/html:/var/www/html
-  ports:
-    - "9000:9000"
+  links:
+    - mysql
+    - pgsql
 
 mysql:
   build: ${build}/docker/mariadb

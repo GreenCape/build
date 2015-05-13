@@ -253,6 +253,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <property name="config-file" value="${cms-root}/configuration.php-dist"/>
             </else>
         </if>
+        <php expression="E_ALL &amp; ~E_STRICT &amp; ~E_DEPRECATED" returnProperty="error.reporting" level="debug"/>
         <php expression="ucfirst('${environment.server.type}')" returnProperty="pretty.server.name" level="debug"/>
         <php expression="ucfirst(str_replace('sql', 'SQL', str_replace('my', 'My', '${environment.database.driver}')))" returnProperty="pretty.database.driver" level="debug"/>
         <property name="p" value="(?:\s*//\s*(.*))?"/>
@@ -270,7 +271,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                     <regexp pattern="(\$db\s*=\s*)(.*?);${p}" replace="\1'${environment.database.name}';${r}"/>
                     <regexp pattern="(\$dbprefix\s*=\s*)(.*?);${p}" replace="\1'${environment.database.prefix}';${r}"/>
                     <!-- Server settings -->
-                    <regexp pattern="(\$error_reporting\s*=\s*)(.*?);${p}" replace="\1E_ALL &amp; ~E_STRICT &amp; ~E_DEPRECATED;${r}"/>
+                    <regexp pattern="(\$error_reporting\s*=\s*)(.*?);${p}" replace="\1'${error.reporting}';${r}"/>
                     <!-- Locale settings -->
                     <regexp pattern="(\$offset\s*=\s*)(.*?);${p}" replace="\1'${environment.server.offset}';${r}"/>
                     <!-- Session settings -->
@@ -315,18 +316,19 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
         <!-- Remove installation folder -->
         <delete dir="${cms-root}/installation"/>
-        <exec command='chmod -R 0777 "${cms-root}"'/>
+        <exec command='chmod -R 0777 "${cms-root}"'/><!-- A better way would be to change ownership within the containers -->
 
     </target>
 
     <target name="docker-start" depends="docker-build">
-        <exec command="docker-compose up -d"/>
+        <exec command="docker-compose up -d" dir="${server-dockyard}"/>
+        <exec command="sleep 15"/><!-- Give the databases time to load the data -->
     </target>
 
     <target name="docker-stop">
-        <exec command="docker-compose stop"/>
+        <exec command="docker-compose stop" dir="${server-dockyard}"/>
         <exec command="sleep 2"/>
-        <exec command="docker-compose rm --force"/>
+        <exec command="docker-compose rm --force" dir="${server-dockyard}"/>
     </target>
 
 </project>

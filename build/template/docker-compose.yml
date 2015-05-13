@@ -7,7 +7,7 @@ apache:
     DISTFILES: $DISTFILES
   links:
     - mysql
-    - pgsql
+    - pgsql:postgresql
 
 nginx:
   image: nginx
@@ -35,7 +35,7 @@ php:
     - ${server-dockyard}/nginx/html:/var/www/html
   links:
     - mysql
-    - pgsql
+    - pgsql:postgresql
 
 mysql:
   build: ${build}/docker/mariadb

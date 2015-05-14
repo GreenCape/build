@@ -6,11 +6,15 @@ class HelpTask extends Task
 {
 	public function main()
 	{
-		$fmt     = "%-23s %s\n";
+		$fmt     = "  %-22s %s\n";
 		$verbose = true;
 
+		`phing -h`;
+		echo "\nTargets:\n";
+
 		$vars = array();
-		foreach ($this->getProject()->getProperties() as $key => $value)
+		$properties = $this->getProject()->getProperties();
+		foreach ($properties as $key => $value)
 		{
 			if (preg_match('~^phing.file~', $key))
 			{
@@ -28,11 +32,14 @@ class HelpTask extends Task
 
 		foreach ($targets as $target)
 		{
+			$source = 'defined in ' . str_replace($properties['phing.dir'] . '/', '', $target['source']);
+
 			if (empty($target['description']))
 			{
 				$target['description'] = '';
 			}
 			printf($fmt, $target['name'], $target['description']);
+
 			if (!empty($target['depends']) && $verbose)
 			{
 				$deps = preg_split('~\s*,\s*~', $target['depends']);
@@ -49,7 +56,11 @@ class HelpTask extends Task
 					$deps[count($deps) - 1] = 'and ' . $deps[count($deps) - 1];
 					$deps                   = implode(', ', $deps);
 				}
-				printf($fmt, '', 'executes ' . $deps);
+				printf($fmt, '', 'executes ' . $deps . ', ' . $source);
+			}
+			else
+			{
+				printf($fmt, '', $source);
 			}
 		}
 	}

@@ -42,8 +42,13 @@ class HelpTask extends Task
 
 			if (!empty($target['depends']) && $verbose)
 			{
-				$deps = preg_split('~\s*,\s*~', $target['depends']);
-				if (count($deps) == 1)
+				$deps = array_values(array_intersect(array_keys($targets), preg_split('~\s*,\s*~', $target['depends'])));
+
+				if (count($deps) == 0)
+				{
+					$deps = 'only hidden targets';
+				}
+				elseif (count($deps) == 1)
 				{
 					$deps = $deps[0];
 				}
@@ -56,11 +61,11 @@ class HelpTask extends Task
 					$deps[count($deps) - 1] = 'and ' . $deps[count($deps) - 1];
 					$deps                   = implode(', ', $deps);
 				}
-				printf($fmt, '', 'executes ' . $deps . ', ' . $source);
+				printf($fmt, '', 'Uses ' . $deps . ', ' . $source);
 			}
 			else
 			{
-				printf($fmt, '', $source);
+				printf($fmt, '', ucfirst($source));
 			}
 		}
 	}

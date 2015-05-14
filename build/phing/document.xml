@@ -29,7 +29,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <property name="apidoc.generator" value="apigen" description="default"/>
     <property name="apidoc.title" value="${phing.project.name} ${package.version} API Documentation"/>
 
-    <target name="document" description="Generate API documentation using the specified generator">
+    <target name="document" description="Generates API documentation using the specified generator.">
         <phingcall target="document-changelog"/>
         <phingcall target="document-${apidoc.generator}"/>
     </target>
@@ -52,7 +52,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             />
     </target>
 
-    <target name="document-changelog" description="Generate CHANGELOG">
+    <target name="document-changelog" description="Generates CHANGELOG.md from the git commit history.">
         <exec executable="git" passthru="true">
             <arg line="log"/>
             <arg line="--pretty=format:'%+d %ad [%h] %s (%an)'"/>

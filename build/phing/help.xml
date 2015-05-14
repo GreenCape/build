@@ -25,7 +25,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <project name="Help Related Targets" default="help">
 
-    <target name="help" description="Show the available targets along with their description">
+    <target name="help" description="Shows the available targets along with their description, dependencies, and location.">
         <help/>
     </target>
 

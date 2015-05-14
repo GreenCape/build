@@ -25,7 +25,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <project name="Quality Metrics Related Targets" default="quality">
 
-    <target name="quality" description="Generate a quality report">
+    <target name="quality" description="Generates a quality report using CodeBrowser.">
         <!-- parallel -->
         <phingcall target="quality-depend"/>
         <phingcall target="quality-mess-detect"/>
@@ -36,7 +36,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <phingcall target="quality-code-browser"/>
     </target>
 
-    <target name="quality-code-browser" description="Aggregate the results from all the measurement tools">
+    <target name="quality-code-browser" description="Aggregates the results from all the measurement tools.">
         <exec executable="phpcb" dir="${project.basedir}" passthru="true">
             <arg line="--log=${build}/logs"/>
             <arg line="--output=${build}/code-browser"/>
@@ -45,7 +45,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </exec>
     </target>
 
-    <target name="quality-depend" description="Generate depend.xml and software metrics charts using PHP Depend">
+    <target name="quality-depend" description="Generates depend.xml and software metrics charts using PHP Depend.">
         <phpdepend file="${source}">
             <logger type="jdepend-xml" outfile="${build}/logs/depend.xml"/>
             <logger type="jdepend-chart" outfile="${build}/charts/dependencies.svg"/>
@@ -54,28 +54,28 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </phpdepend>
     </target>
 
-    <target name="quality-mess-detect" description="Generate pmd.xml using PHP MessDetector">
+    <target name="quality-mess-detect" description="Generates pmd.xml using PHP MessDetector.">
         <phpmd rulesets="${build}/phpmd.xml">
             <fileset refid="php-files"/>
             <formatter type="xml" outfile="${build}/logs/pmd.xml"/>
         </phpmd>
     </target>
 
-    <target name="quality-copy-paste-detect" description="Generate pmd-cpd.xml using PHP CopyPasteDetector">
+    <target name="quality-copy-paste-detect" description="Generates pmd-cpd.xml using PHP CopyPasteDetector.">
         <phpcpd>
             <fileset refid="php-files"/>
             <formatter type="pmd" outfile="${build}/logs/pmd-cpd.xml"/>
         </phpcpd>
     </target>
 
-    <target name="quality-check-style" description="Generate checkstyle.xml using PHP CodeSniffer">
+    <target name="quality-check-style" description="Generates checkstyle.xml using PHP CodeSniffer.">
         <phpcodesniffer standard="${build}/phpcs/Joomla" showSniffs="true" showWarnings="true">
             <fileset refid="php-files"/>
             <formatter type="checkstyle" outfile="${build}/logs/checkstyle.xml"/>
         </phpcodesniffer>
     </target>
 
-    <target name="quality-count" description="Generate phploc.csv">
+    <target name="quality-count" description="Generates phploc.csv using HPH Loc.">
         <exec executable="phploc" dir="${project.basedir}" passthru="true">
             <arg line="--log-csv ${build}/logs/phploc.csv"/>
             <arg line="source"/>

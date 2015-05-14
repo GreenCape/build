@@ -50,9 +50,9 @@
         <include name="**/*"/>
     </fileset>
 
-    <target name="build" depends="prepare, test, quality, document"/>
+    <target name="build" depends="prepare, test, quality, document" description="Performs all tests and generates documentation and the quality report."/>
 
-    <target name="clean" description="Cleanup artifact directories">
+    <target name="clean" description="Cleanup artifact directories" hidden="true">
         <delete dir="${build}/api" quiet="true"/>
         <delete dir="${build}/code-browser" quiet="true"/>
         <delete dir="${build}/coverage" quiet="true"/>
@@ -60,7 +60,7 @@
         <delete dir="${build}/charts" quiet="true"/>
     </target>
 
-    <target name="prepare" depends="clean" description="Create artifact directories">
+    <target name="prepare" depends="clean" description="Create artifact directories" hidden="true">
         <mkdir dir="${build}/api"/>
         <mkdir dir="${build}/code-browser"/>
         <mkdir dir="${build}/coverage"/>
@@ -68,7 +68,7 @@
         <mkdir dir="${build}/charts"/>
     </target>
 
-    <target name="phpab" description="Generate autoload script">
+    <target name="phpab" description="Generate autoload script" hidden="true">
         <foreach list="administrator/components/, components" target="create-autoloader" param="target"/>
         <exec command="phpab --tolerant --basedir . --output autoload.php mocks" dir="${tests}" passthru="true"/>
         <exec command="phpab --tolerant --basedir ${system-tests} --template ${system-tests}/autoload.php.in --output ${system-tests}/autoload.php ${build}/Selenium" dir="${project.basedir}" passthru="true"/>
@@ -153,13 +153,13 @@
 
     <!-- Testing -->
 
-    <target name="test" depends="test-unit, test-integration-all, test-system-all, test-coverage-report" description="Run both extension and installation tests"/>
+    <target name="test" depends="test-unit, test-integration-all, test-system-all, test-coverage-report" description="Runs all tests locally and in the test containers."/>
 
-    <target name="test-unit" depends="phpab" description="Run unit tests">
+    <target name="test-unit" depends="phpab" description="Runs local unit tests">
         <exec command="phpunit" dir="${unit-tests}" passthru="true"/>
     </target>
 
-    <target name="test-integration-all" depends="patch-create" description="Run integrations tests on all test installations">
+    <target name="test-integration-all" depends="patch-create" description="Runs integration tests on all test installations.">
         <foreach list="${test.environments}" param="target" target="test-integration"/>
     </target>
 
@@ -212,7 +212,7 @@
         </if>
     </target>
 
-    <target name="test-system-all" depends="dist-prepare, selenium-start" description="Run system tests on all test installations">
+    <target name="test-system-all" depends="dist-prepare, selenium-start" description="Runs system tests on all test installations.">
         <delete dir="${build}/screenshots"/>
         <mkdir dir="${build}/screenshots"/>
         <foreach list="${test.environments}" param="target" target="test-system"/>
@@ -257,7 +257,7 @@
         </trycatch>
     </target>
 
-    <target name="test-coverage-report" description="Create an HTML coverage report">
+    <target name="test-coverage-report" description="Creates an consolidated HTML coverage report">
         <exec executable="${qat.coverage}" passthru="true">
             <arg line="-f"/><arg path="${build}/logs/clover.serialized"/>
             <!-- @todo Make declaration of other clover files dynamic -->

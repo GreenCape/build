@@ -25,7 +25,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <project name="Patch Set Related Targets" default="patch-create">
 
-    <target name="patch-create" description="Create a patch set ready to drop into an existing installation">
+    <target name="patch-create" description="Creates a patch set ready to drop into an existing installation.">
         <property name="patchset.location" value="dist/${package.type}${package.name}-${package.version}-full" override="true"/>
         <uptodate property="patchset.status" targetfile="${patchset.location}" value="uptodate">
             <fileset refid="source-files"/>

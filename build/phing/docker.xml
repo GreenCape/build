@@ -33,11 +33,11 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <expandproperties/>
     </filterchain>
 
-    <target name="docker-rm">
+    <target name="docker-rm" description="Removes the contents of the test containers.">
         <delete dir="${server-dockyard}" quiet="true"/>
     </target>
 
-    <target name="docker-build" depends="docker-rm">
+    <target name="docker-build" depends="docker-rm" description="Generates the contents and prepares the test containers.">
 
         <!-- Create directories for container contents -->
         <mkdir dir="${server-dockyard}/nginx/conf"/>
@@ -329,12 +329,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     </target>
 
-    <target name="docker-start" depends="docker-build">
+    <target name="docker-start" depends="docker-build" description="Starts the test containers.">
         <exec command="docker-compose up -d" dir="${server-dockyard}"/>
         <exec command="sleep 15"/><!-- Give the databases time to load the data -->
     </target>
 
-    <target name="docker-stop">
+    <target name="docker-stop" description="Stops and removes the test containers.">
         <exec command="docker-compose stop" dir="${server-dockyard}"/>
         <exec command="sleep 2"/>
         <exec command="docker-compose rm --force" dir="${server-dockyard}"/>

@@ -17,7 +17,7 @@
 
     <import file="build/build.xml"/>
 
-    <exportproperties targetfile="build/props.txt"/>
+    <!--<exportproperties targetfile="build/props.txt"/>-->
 
 </project>
 

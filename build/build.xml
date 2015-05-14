@@ -6,6 +6,7 @@
     <import file="${build}/phing/metrics.xml"/>
     <import file="${build}/phing/document.xml"/>
     <import file="${build}/phing/patch.xml"/>
+    <import file="${build}/phing/help.xml"/>
 
     <property name="package.type" value="com_" description="default"/>
     <property name="package.name" value="untitled" description="default"/>

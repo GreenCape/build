@@ -25,9 +25,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <project name="Documentation Related Targets" default="document">
 
+    <!-- supported generators: phpdocumentor2, apigen -->
+    <property name="apidoc.generator" value="apigen" description="default"/>
+    <property name="apidoc.title" value="${phing.project.name} ${package.version} API Documentation"/>
+
     <target name="document" description="Generate API documentation using the specified generator">
         <phingcall target="document-changelog"/>
-        <!--suppress PhingDomInspection -->
         <phingcall target="document-${apidoc.generator}"/>
     </target>
 

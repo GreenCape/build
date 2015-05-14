@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SQL Database Manager" default="build" basedir=".">
+
+    <!-- Directory layout -->
+    <property name="build" value="${project.basedir}/build"/>
+    <property name="dist" value="${project.basedir}/dist"/>
+    <property name="source" value="${project.basedir}/source"/>
+    <property name="tests" value="${project.basedir}/tests"/>
+
+    <!-- Package data -->
+    <property name="package.type" value="com_"/>
+    <property name="package.name" value="sql"/>
+    <property name="manifest.file" value="installation/manifest.xml"/>
+
+    <!-- supported generators: phpdocumentor2, apigen -->
+    <property name="apidoc.generator" value="apigen"/>
+
+    <import file="build/build.xml"/>
+
+    <exportproperties targetfile="build/props.txt"/>
+
+</project>
+

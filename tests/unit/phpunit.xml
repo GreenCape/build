@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         strict="true"
+         verbose="true"
+         timeoutForSmallTests="5">
+    <testsuites>
+        <testsuite name="unit">
+            <directory suffix="Test.php">.</directory>
+        </testsuite>
+    </testsuites>
+
+    <logging>
+        <log type="coverage-html" target="../../build/logs/report" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="../../build/logs/coverage.xml"/>
+        <log type="coverage-php" target="../../build/logs/coverage.serialized"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+        <log type="json" target="../../build/logs/logfile.json"/>
+        <log type="tap" target="../../build/logs/logfile.tap"/>
+        <log type="junit" target="../../build/logs/logfile.xml" logIncompleteSkipped="false"/>
+        <log type="testdox-html" target="../../build/logs/testdox.html"/>
+        <log type="testdox-text" target="../../build/logs/testdox.txt"/>
+    </logging>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../../source</directory>
+            <exclude/>
+        </whitelist>
+    </filter>
+
+    <selenium>
+        <browser name="Firefox on localhost"
+                 browser="*chrome"
+                 host="localhost"
+                 port="4444"
+                 timeout="30000"/>
+    </selenium>
+</phpunit>

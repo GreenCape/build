@@ -28,9 +28,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <taskdef file="${project.basedir}/build/phing/tasks.properties"/>
 
     <property name="project.name" value="${phing.project.name}"/>
-    <property name="source" value="${project.basedir}/source"/>
-    <property name="build" value="${project.basedir}/build"/>
-    <property name="tests" value="${project.basedir}/tests"/>
+    <property name="build" value="${project.basedir}/build" description="default"/>
+    <property name="dist" value="${project.basedir}/dist" description="default"/>
+    <property name="source" value="${project.basedir}/source" description="default"/>
+    <property name="tests" value="${project.basedir}/tests" description="default"/>
     <property name="unit-tests" value="${tests}/unit"/>
     <property name="integration-tests" value="${tests}/integration"/>
     <property name="system-tests" value="${tests}/system"/>

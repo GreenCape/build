@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Patch set related targets for GreenCape build environment
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+
+The "GNU General Public License" (GPL) is available at
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+@package    BuildEnvironment
+@author     Niels Braczek <nbraczek@bsds.de>
+@copyright  Copyright (C) 2013-15 BSDS Braczek Software- und DatenSysteme. All rights reserved.
+-->
+<project name="Patch Set Related Targets" default="patch-create">
+
+    <target name="patch-create" description="Create a patch set ready to drop into an existing installation">
+        <property name="patchset.location" value="dist/${package.type}${package.name}-${package.version}-full" override="true"/>
+        <uptodate property="patchset.status" targetfile="${patchset.location}" value="uptodate">
+            <fileset refid="source-files"/>
+        </uptodate>
+        <if>
+            <equals arg1="${patchset.status}" arg2="uptodate"/>
+            <then>
+                <echo message="Patchset ${patchset.location} is uptodate" level="info"/>
+            </then>
+            <else>
+                <delete dir="${patchset.location}" quiet="true"/>
+                <copy todir="${patchset.location}">
+                    <fileset dir="${source}">
+                        <exclude name="installation/"/>
+                    </fileset>
+                </copy>
+                <if>
+                    <equals arg1="${package.type}" arg2="com_"/>
+                    <then>
+                        <copy todir="${patchset.location}/administrator/components/${package.type}${package.name}">
+                            <fileset dir="${source}/installation">
+                                <include name="**/*"/>
+                            </fileset>
+                        </copy>
+                    </then>
+                </if>
+            </else>
+        </if>
+    </target>
+
+</project>

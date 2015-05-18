@@ -20,6 +20,7 @@ RUN set -x \
     && make install \
     && make clean
 
+COPY php.ini /usr/local/etc/php/
 COPY conf.d/* /usr/local/etc/php/conf.d/
 
 RUN docker-php-ext-install mysql mysqli \

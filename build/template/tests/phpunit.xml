@@ -12,7 +12,6 @@
 
     <logging>
         <log type="coverage-php" target="@CMS_ROOT@/build/logs/integration-@TARGET@-@APPLICATION@.cov"/>
-        <log type="coverage-clover" target="@CMS_ROOT@/build/logs/integration-@TARGET@-@APPLICATION@.xml"/>
     </logging>
 
     <filter>

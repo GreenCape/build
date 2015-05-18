@@ -4,6 +4,7 @@ $appDirectory = $application == 'site' ? '' : '/' . $application;
 $cmsDirectory = '@CMS_ROOT@';
 
 $_SERVER['HTTP_HOST'] = 'localhost';
+$_SERVER['HTTP_USER_AGENT'] = 'none';
 
 if (version_compare(PHP_VERSION, '5.3.10', '<'))
 {

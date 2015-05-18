@@ -45,7 +45,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="test-integration" description="Runs integration tests on all test installations.">
-        <!--depends="patch-create, docker-start"-->
+        <!-- @todo Make this callable for arbitrary test environments-->
 
         <mkdir dir="${build}/logs/coverage"/>
 

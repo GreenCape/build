@@ -34,7 +34,7 @@ if (!defined('JPATH_COMPONENT')) {
 	define('JPATH_COMPONENT', JPATH_ADMINISTRATOR . '/components/com_sql');
 }
 
-require_once dirname(JPATH_ROOT) . '/tests/autoload.php';
+require_once JPATH_ROOT . '/tests/autoload.php';
 
 class SqlIntegrationTest extends PHPUnit_Framework_TestCase
 {

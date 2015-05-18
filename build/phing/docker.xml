@@ -33,64 +33,84 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <expandproperties/>
     </filterchain>
 
-    <target name="docker-rm" description="Removes the contents of the test containers.">
-        <delete dir="${server-dockyard}" quiet="true"/>
-    </target>
-
-    <target name="docker-build" depends="docker-rm" description="Generates the contents and prepares the test containers.">
-
-        <!-- Create directories for container contents -->
-        <mkdir dir="${server-dockyard}/nginx/conf"/>
-        <mkdir dir="${server-dockyard}/nginx/html"/>
-        <mkdir dir="${server-dockyard}/apache/conf"/>
-        <mkdir dir="${server-dockyard}/apache/html"/>
-        <mkdir dir="${server-dockyard}/proxy/conf"/>
-        <mkdir dir="${server-dockyard}/mysql"/>
-        <mkdir dir="${server-dockyard}/postgresql"/>
-
-        <!-- Get available Joomla! versions -->
-        <joomla-versions versionFile="${version-cache}"/>
-
-        <!-- Load database environment, if provided -->
+    <target name="docker-build" description="Generates the contents and prepares the test containers.">
+        <uptodate property="docker-build.status" targetfile="${server-dockyard}/docker-compose.yml" value="uptodate">
+            <fileset refid="source-files"/>
+            <fileset refid="integration-test-files"/>
+            <fileset dir="${test-environments}">
+                <include name="**/*"/>
+            </fileset>
+        </uptodate>
         <if>
-            <available file="${test-environments}/database.xml" property="unused"/>
+            <equals arg1="${docker-build.status}" arg2="uptodate"/>
             <then>
-                <xmlproperty file="${test-environments}/database.xml" keepRoot="true" collapseAttributes="true"/>
-            </then>
-        </if>
-
-        <!-- Set default values for keys not defined in database.xml -->
-        <property name="database.mysql.version" value="latest"/>
-        <property name="database.mysql.name" value="joomla_test"/>
-        <property name="database.mysql.user" value="db_user"/>
-        <property name="database.mysql.password" value="db_pass"/>
-        <property name="database.mysql.rootPassword" value=""/>
-        <if>
-            <equals arg1="" arg2="${database.mysql.rootPassword}"/>
-            <then>
-                <property name="database.mysql.password.option" value=""/>
+                <echo message="Container setups are up to date - skipping." level="info"/>
             </then>
             <else>
-                <property name="database.mysql.password.option" value="-p'${database.mysql.rootPassword}'"/>
+                <trycatch property="error">
+                    <try>
+                        <!-- Recreate directories for container contents -->
+                        <delete dir="${server-dockyard}" quiet="true"/>
+                        <mkdir dir="${server-dockyard}/nginx/conf"/>
+                        <mkdir dir="${server-dockyard}/nginx/html"/>
+                        <mkdir dir="${server-dockyard}/apache/conf"/>
+                        <mkdir dir="${server-dockyard}/apache/html"/>
+                        <mkdir dir="${server-dockyard}/proxy/conf"/>
+                        <mkdir dir="${server-dockyard}/mysql"/>
+                        <mkdir dir="${server-dockyard}/postgresql"/>
+
+                        <!-- Get available Joomla! versions -->
+                        <joomla-versions versionFile="${version-cache}"/>
+
+                        <!-- Load database environment, if provided -->
+                        <if>
+                            <available file="${test-environments}/database.xml" property="unused"/>
+                            <then>
+                                <xmlproperty file="${test-environments}/database.xml" keepRoot="true" collapseAttributes="true"/>
+                            </then>
+                        </if>
+
+                        <!-- Set default values for keys not defined in database.xml -->
+                        <property name="database.mysql.version" value="latest"/>
+                        <property name="database.mysql.name" value="joomla_test"/>
+                        <property name="database.mysql.user" value="db_user"/>
+                        <property name="database.mysql.password" value="db_pass"/>
+                        <property name="database.mysql.rootPassword" value=""/>
+                        <if>
+                            <equals arg1="" arg2="${database.mysql.rootPassword}"/>
+                            <then>
+                                <property name="database.mysql.password.option" value=""/>
+                            </then>
+                            <else>
+                                <property name="database.mysql.password.option" value="-p'${database.mysql.rootPassword}'"/>
+                            </else>
+                        </if>
+                        <property name="database.postgresql.version" value="latest"/>
+                        <property name="database.postgresql.name" value="joomla_test"/>
+                        <property name="database.postgresql.user" value="db_user"/>
+                        <property name="database.postgresql.password" value="db_pass"/>
+
+                        <!-- Handle each test environment -->
+                        <foreach param="environment-definition" target="docker-build-system">
+                            <fileset dir="${test-environments}">
+                                <include name="*.xml"/>
+                                <exclude name="database.xml"/>
+                                <exclude name="default.xml"/>
+                            </fileset>
+                        </foreach>
+
+                        <copy file="${build-templates}/docker-compose.yml" tofile="${server-dockyard}/docker-compose.yml">
+                            <filterchain refid="expand"/>
+                        </copy>
+                    </try>
+                    <catch>
+                        <echo message="Failed. ${error}" level="error"/>
+                    </catch>
+                    <finally>
+                    </finally>
+                </trycatch>
             </else>
         </if>
-        <property name="database.postgresql.version" value="latest"/>
-        <property name="database.postgresql.name" value="joomla_test"/>
-        <property name="database.postgresql.user" value="db_user"/>
-        <property name="database.postgresql.password" value="db_pass"/>
-
-        <!-- Handle each test environment -->
-        <foreach param="environment-definition" target="docker-build-system">
-            <fileset dir="${test-environments}">
-                <include name="*.xml"/>
-                <exclude name="database.xml"/>
-                <exclude name="default.xml"/>
-            </fileset>
-        </foreach>
-
-        <copy file="${build-templates}/docker-compose.yml" tofile="${server-dockyard}/docker-compose.yml">
-            <filterchain refid="expand"/>
-        </copy>
 
     </target>
 
@@ -171,6 +191,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <include name="mocks/**/*"/>
                 <include name="integration/**/*"/>
                 <include name="system/**/*"/>
+                <include name="autoload.php"/>
             </fileset>
         </copy>
 
@@ -190,14 +211,17 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <fail unless="testdata" message="No test data found for Joomla! ${version} with ${environment.database.engine} database"/>
 
         <echo level="info">
-            Joomla version:  ${version}
-            Domain:          ${domain}
-            Server:          ${environment.server.type}
+            Joomla version: ${version}
+            Domain: ${domain}
+            Server: ${environment.server.type}
 
-            Database type:   ${environment.database.engine}:${database.${environment.database.engine}.version} (${environment.database.driver})
-            Database name:   ${environment.database.name}
+            Database type:
+            ${environment.database.engine}:${database.${environment.database.engine}.version}
+            (${environment.database.driver})
+            Database name: ${environment.database.name}
             Database prefix: ${environment.database.prefix}
-            Database user:   ${database.${environment.database.engine}.user}:${database.${environment.database.engine}.password}
+            Database user:
+            ${database.${environment.database.engine}.user}:${database.${environment.database.engine}.password}
         </echo>
 
         <!-- Build the import files -->
@@ -326,18 +350,26 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <!-- Remove installation folder -->
         <delete dir="${cms-root}/installation"/>
         <exec command='chmod -R 0777 "${cms-root}"'/><!-- A better way would be to change ownership within the containers -->
-
     </target>
 
-    <target name="docker-start" depends="docker-build" description="Starts the test containers.">
-        <exec command="docker-compose up -d" dir="${server-dockyard}"/>
-        <exec command="sleep 15"/><!-- Give the databases time to load the data -->
+    <target name="docker-start" description="Starts the test containers, building them only if not existing.">
+        <exec command="docker-compose up --no-recreate -d" dir="${server-dockyard}" passthru="true"/>
+        <!--<exec command="sleep 15"/>--><!-- Give the databases time to load the data -->
+    </target>
+
+    <target name="docker-up" description="Starts the test containers after rebuilding them.">
+        <exec command="docker-compose up -d" dir="${server-dockyard}" passthru="true"/>
+        <!--<exec command="sleep 15"/>--><!-- Give the databases time to load the data -->
     </target>
 
     <target name="docker-stop" description="Stops and removes the test containers.">
         <exec command="docker-compose stop" dir="${server-dockyard}"/>
-        <exec command="sleep 2"/>
+        <!--<exec command="sleep 2"/>-->
+    </target>
+
+    <target name="docker-rm" depends="docker-stop" description="Removes the content of test containers.">
         <exec command="docker-compose rm --force" dir="${server-dockyard}"/>
+        <delete dir="${server-dockyard}" quiet="true"/>
     </target>
 
 </project>

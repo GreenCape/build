@@ -5,18 +5,19 @@
          verbose="true"
          timeoutForSmallTests="5">
     <testsuites>
-        <testsuite name="unit">
+        <testsuite name="integration-@APPLICATION@">
             <directory suffix="Test.php">.</directory>
         </testsuite>
     </testsuites>
 
     <logging>
-        <log type="coverage-php" target="../../build/logs/coverage/unit.cov"/>
+        <log type="coverage-php" target="@CMS_ROOT@/build/logs/integration-@TARGET@-@APPLICATION@.cov"/>
+        <log type="coverage-clover" target="@CMS_ROOT@/build/logs/integration-@TARGET@-@APPLICATION@.xml"/>
     </logging>
 
     <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">../../source</directory>
+        <whitelist addUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">@CMS_ROOT@</directory>
             <exclude/>
         </whitelist>
     </filter>

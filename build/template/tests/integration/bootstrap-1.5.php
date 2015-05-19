@@ -7,18 +7,16 @@ $_SERVER['HTTP_HOST'] = 'localhost';
 $_SERVER['HTTP_USER_AGENT'] = 'none';
 
 define('_JEXEC', 1);
+define('JPATH_BASE', $cmsDirectory . $appDirectory);
 define('DS', DIRECTORY_SEPARATOR);
 
-if (file_exists($cmsDirectory . "$appDirectory/defines.php"))
-{
-	include_once $cmsDirectory . "$appDirectory/defines.php";
-}
+require_once JPATH_BASE . "/includes/defines.php";
 
-if (!defined('JPATH_BASE'))
+require_once JPATH_LIBRARIES . '/loader.php';
+spl_autoload_register(function ($class)
 {
-	define('JPATH_BASE', $cmsDirectory . $appDirectory);
-	require_once JPATH_BASE . "/includes/defines.php";
-}
+	return JLoader::load($class);
+});
 
 require_once JPATH_BASE . '/includes/framework.php';
 
@@ -31,10 +29,7 @@ if ($application == 'site')
 {
 }
 
-require_once $cmsDirectory . '/libraries/loader.php';
-
 $mainframe = JFactory::getApplication($application);
-
 $mainframe->initialise();
 
 echo "\nBootstrap file for PHPUnit: " . __FILE__ . "\n";

@@ -42,7 +42,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             <menu link="option=com_sql&amp;view=queries" img="components/com_sql/assets/images/icon-16-save.png">COM_SQL_SAVED_QUERIES</menu>
         </submenu>
 
-        <files folder="admin">
+        <files folder="administrator">
             <filename>access.xml</filename>
             <filename>autoload.php</filename>
             <filename>config.xml</filename>

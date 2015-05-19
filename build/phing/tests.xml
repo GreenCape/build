@@ -25,7 +25,29 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <project name="Test Related Targets" default="patch-create">
 
-    <target name="test" depends="test-unit, test-integration, test-system-all, test-coverage-report" description="Runs all tests locally and in the test containers."/>
+    <target name="test" depends="test-unit, test-integration, test-system, test-coverage-report" description="Runs all tests locally and in the test containers."/>
+
+    <target name="test-install" description="Installs the tests on the test environments" hidden="true">
+
+        <!-- Add test files -->
+        <delete dir="${cms-root}/tests" quiet="true"/>
+        <mkdir dir="${cms-root}/tests"/>
+
+        <copy todir="${cms-root}/tests" includeemptydirs="false">
+            <fileset dir="${tests}">
+                <include name="mocks/**/*"/>
+                <include name="integration/**/*"/>
+                <include name="system/**/*"/>
+                <include name="autoload.php"/>
+            </fileset>
+        </copy>
+        <copy todir="${cms-root}/tests/system/" includeemptydirs="false">
+            <fileset dir="${build-templates}/selenium">
+                <exclude name="server_files"/>
+            </fileset>
+        </copy>
+
+    </target>
 
     <target name="test-unit" depends="phpab" description="Runs local unit tests">
 
@@ -50,7 +72,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <mkdir dir="${build}/logs/coverage"/>
 
         <!-- Handle each test environment -->
-        <foreach param="environment-definition" target="test-integration-system">
+        <foreach param="environment-definition" target="test-integration-single">
             <fileset dir="${test-environments}">
                 <include name="*.xml"/>
                 <exclude name="database.xml"/>
@@ -60,7 +82,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     </target>
 
-    <target name="test-integration-system" description="Run integrations tests on a single test installation" hidden="true">
+    <target name="test-integration-single" description="Run integrations tests on a single test installation" hidden="true">
         <php expression="basename('${environment-definition}', '.xml')" returnProperty="target" level="debug"/>
 
         <!-- Get the environment settings -->
@@ -83,12 +105,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             </else>
         </if>
 
-        <uptodate property="test-integration-system.status" targetfile="${build}/logs/${target}/clover.serialized" value="uptodate">
+        <uptodate property="test-integration-single.status" targetfile="${build}/logs/coverage/integration-${target}.cov" value="uptodate">
             <fileset refid="source-files"/>
             <fileset refid="integration-test-files"/>
         </uptodate>
         <if>
-            <equals arg1="${test-integration-system.status}" arg2="uptodate"/>
+            <equals arg1="${test-integration-single.status}" arg2="uptodate"/>
             <then>
                 <echo message="Integration test for ${target} is up to date - skipping." level="info"/>
             </then>
@@ -100,10 +122,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
                         <foreach list="site, administrator" param="application" target="test-integration-app"/>
 
-                        <copy todir="${build}/logs/coverage">
-                            <fileset dir="${cms-root}/build/logs" expandsymboliclinks="true">
-                                <include name="**/*"/>
+                        <combine-coverage php="${cms-root}/build/logs/integration-${target}.cov">
+                            <fileset dir="${cms-root}/build/logs">
+                                <include name="**/integration-${target}-*.cov"/>
                             </fileset>
+                        </combine-coverage>
+                        <copy file="${cms-root}/build/logs/integration-${target}.cov" todir="${build}/logs/coverage">
                             <filterchain>
                                 <replaceregexp>
                                     <regexp pattern="/var/www/html/${domain}/" replace="${source}/"/>
@@ -125,9 +149,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <target name="test-integration-app" hidden="true">
         <filterchain id="integration-test.configuration">
             <replacetokens>
-                <token key="TARGET" value="${target}"/>
                 <token key="APPLICATION" value="${application}"/>
                 <token key="CMS_ROOT" value="/var/www/html/${domain}"/>
+                <token key="TARGET" value="${target}"/>
             </replacetokens>
         </filterchain>
 
@@ -151,44 +175,85 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <exec command="${cmd}" passthru="true" logoutput="true"/>
     </target>
 
-    <target name="test-system-all" depends="dist-prepare, selenium-start" description="Runs system tests on all test installations.">
-        <delete dir="${build}/screenshots"/>
+    <target name="test-system" depends="dist-prepare" description="Runs system tests on all test installations.">
+        <delete dir="${build}/screenshots" quiet="true"/>
         <mkdir dir="${build}/screenshots"/>
-        <foreach list="${test.targets}" param="target" target="test-system"/>
+
+        <!-- Handle each test environment -->
+        <foreach param="environment-definition" target="test-system-single">
+            <fileset dir="${test-environments}">
+                <include name="*.xml"/>
+                <exclude name="database.xml"/>
+                <exclude name="default.xml"/>
+            </fileset>
+        </foreach>
     </target>
 
-    <target name="test-system" description="Run system tests on a single test installation" hidden="true">
+    <target name="test-system-single" description="Run system tests on a single test installation" hidden="true">
+        <php expression="basename('${environment-definition}', '.xml')" returnProperty="target" level="debug"/>
+
+        <!-- Get the environment settings -->
+        <xmlproperty file="${test-environments}/${environment-definition}" keepRoot="true" collapseAttributes="true"/>
+        <property name="environment.name" value="${target}" description="default"/>
+
+        <!-- Supply with default values -->
+        <xmlproperty file="${test-environments}/default.xml" keepRoot="true" collapseAttributes="true"/>
+        <property name="environment.server.type" value="nginx" description="default"/>
+        <property name="environment.server.tld" value="dev" description="default"/>
+        <property name="domain" value="${environment.name}.${environment.server.tld}"/>
+        <property name="cms-root" value="${server-dockyard}/${environment.server.type}/html/${domain}"/>
+        <property name="environment.browser.type" value="firefox" description="default"/>
+
+        <filterchain id="system-test.configuration">
+            <replacetokens>
+                <token key="APPLICATION" value="${application}"/>
+                <token key="BROWSER" value="${environment.browser.type}"/>
+                <token key="CMS_ROOT" value="/var/www/html/${domain}"/>
+                <token key="DOMAIN" value="${domain}"/>
+                <token key="TARGET" value="${target}"/>
+            </replacetokens>
+        </filterchain>
+
         <trycatch property="error">
             <try>
-                <echo message="System test for ${target} on ${test.${target}.url}" level="info"/>
-                <exec command="phing systest-start" dir="${test.basedir}/${target}" passthru="true"/>
+                <echo message="System test for ${target} on ${domain}" level="info"/>
 
-                <copy tofile="/home/nibra/public_html/${package.type}${package.name}-${package.version}.zip"
-                      file="${project.basedir}/dist/${package.type}${package.name}-${package.version}.zip"/>
+                <!-- Find bootstrap file -->
+                <version-match dir="${build-templates}/tests/system" pattern="bootstrap-(.*).php" returnProperty="bootstrap" version="${environment.joomla.version}"/>
+                <fail unless="bootstrap" message="No bootstrap file found for Joomla! ${environment.joomla.version}"/>
 
-                <delete file="${system-tests}/phpunit.xml" quiet="true"/>
-                <copy tofile="${system-tests}/phpunit.xml" file="${system-tests}/phpunit.xml.in">
+                <!-- Configure bootstrap file -->
+                <copy file="${bootstrap}" tofile="${cms-root}/tests/system/bootstrap.php">
+                    <filterchain refid="system-test.configuration"/>
+                </copy>
+
+                <!-- Configure phpunit -->
+                <copy file="${build-templates}/tests/system/phpunit.xml" tofile="${cms-root}/tests/system/phpunit.xml">
+                    <filterchain refid="system-test.configuration"/>
+                </copy>
+
+                <property name="container" value="servers_${environment.server.type}_1"/>
+                <property name="cmd" value='sudo docker exec ${container} /bin/bash -cv "cd /var/www/html/${domain}/tests/system; /vendor/bin/phpunit"'/>
+                <exec command="${cmd}" passthru="true" logoutput="true"/>
+
+                <combine-coverage php="${cms-root}/build/logs/integration-${target}.cov">
+                    <fileset dir="${cms-root}/build/logs">
+                        <include name="**/*.cov"/>
+                    </fileset>
+                </combine-coverage>
+                <copy file="${cms-root}/build/logs/integration-${target}.cov" todir="${build}/logs/coverage">
                     <filterchain>
-                        <replacetokens>
-                            <token key="test-url" value="${test.${target}.url}"/>
-                            <token key="target" value="${target}"/>
-                        </replacetokens>
+                        <replaceregexp>
+                            <regexp pattern="/var/www/html/${domain}/" replace="${source}/"/>
+                            <regexp pattern="'(.*?)Test::test" replace="'${target}: \1Test::test"/>
+                        </replaceregexp>
                     </filterchain>
                 </copy>
-                <exec executable="phpunit" dir="${system-tests}" checkreturn="true" passthru="true">
-                </exec>
             </try>
             <catch>
                 <echo message="Failed. ${error}" level="error"/>
             </catch>
             <finally>
-                <copy todir="${build}/logs/${target}" overwrite="true">
-                    <fileset dir="${test.basedir}/${target}/build/coverage-data" expandsymboliclinks="true">
-                        <include name="**/*"/>
-                    </fileset>
-                </copy>
-                <delete file="${system-tests}/phpunit.xml"/>
-                <exec command="phing systest-stop" dir="${test.basedir}/${target}" passthru="true"/>
             </finally>
         </trycatch>
     </target>

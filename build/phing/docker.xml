@@ -183,18 +183,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             </fileset>
         </copy>
 
-        <!-- Add test files -->
-        <delete dir="${cms-root}/tests" quiet="true"/>
-        <mkdir dir="${cms-root}/tests"/>
-        <copy todir="${cms-root}/tests" includeemptydirs="false">
-            <fileset dir="${tests}">
-                <include name="mocks/**/*"/>
-                <include name="integration/**/*"/>
-                <include name="system/**/*"/>
-                <include name="autoload.php"/>
-            </fileset>
-        </copy>
-
         <!-- Build the database import script -->
         <available file="${cms-root}/installation/sql/${environment.database.engine}" type="dir" property="engine_supported"/>
         <fail unless="engine_supported" message="Joomla! ${version} does not support ${environment.database.engine} databases"/>

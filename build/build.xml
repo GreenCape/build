@@ -161,7 +161,6 @@
     </target>
 
     <target name="dist-prepare" depends="phpab, dist-clean" description="Create distribution directory">
-        <exportproperties targetfile="props.txt"/>
         <!--
         Installation files
         -->

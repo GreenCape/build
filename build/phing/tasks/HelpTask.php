@@ -4,10 +4,19 @@ require_once "phing/Task.php";
 
 class HelpTask extends Task
 {
+	private $verbose = false;
+
+	/**
+	 * @param boolean $verbose
+	 */
+	public function setVerbose($verbose)
+	{
+		$this->verbose = $verbose;
+	}
+
 	public function main()
 	{
 		$fmt     = "  %-22s %s\n";
-		$verbose = true;
 
 		`phing -h`;
 		echo "\nTargets:\n";
@@ -38,9 +47,13 @@ class HelpTask extends Task
 			{
 				$target['description'] = '';
 			}
+			if ($target['hidden'] == 'true')
+			{
+				$target['description'] = trim($target['description'] . ' (hidden)');
+			}
 			printf($fmt, $target['name'], $target['description']);
 
-			if (!empty($target['depends']) && $verbose)
+			if (!empty($target['depends']))
 			{
 				$deps = array_values(array_intersect(array_keys($targets), preg_split('~\s*,\s*~', $target['depends'])));
 
@@ -61,7 +74,7 @@ class HelpTask extends Task
 					$deps[count($deps) - 1] = 'and ' . $deps[count($deps) - 1];
 					$deps                   = implode(', ', $deps);
 				}
-				printf($fmt, '', 'Uses ' . $deps . ', ' . $source);
+				printf($fmt, '', 'Uses ' . $deps . '; ' . $source);
 			}
 			else
 			{
@@ -78,7 +91,7 @@ class HelpTask extends Task
 		foreach ($matches as $match)
 		{
 			$attributes = $this->parseAttributes($match[1]);
-			if (empty($attributes['hidden']) || $attributes['hidden'] == false)
+			if ($this->verbose || empty($attributes['hidden']) || $attributes['hidden'] == 'false')
 			{
 				$attributes['source']         = $file;
 				$targets[$attributes['name']] = $attributes;

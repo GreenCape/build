@@ -27,28 +27,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <target name="test" depends="test-unit, test-integration, test-system, test-coverage-report" description="Runs all tests locally and in the test containers."/>
 
-    <target name="test-install" description="Installs the tests on the test environments" hidden="true">
-
-        <!-- Add test files -->
-        <delete dir="${cms-root}/tests" quiet="true"/>
-        <mkdir dir="${cms-root}/tests"/>
-
-        <copy todir="${cms-root}/tests" includeemptydirs="false">
-            <fileset dir="${tests}">
-                <include name="mocks/**/*"/>
-                <include name="integration/**/*"/>
-                <include name="system/**/*"/>
-                <include name="autoload.php"/>
-            </fileset>
-        </copy>
-        <copy todir="${cms-root}/tests/system/" includeemptydirs="false">
-            <fileset dir="${build-templates}/selenium">
-                <exclude name="server_files"/>
-            </fileset>
-        </copy>
-
-    </target>
-
     <target name="test-unit" depends="phpab" description="Runs local unit tests">
 
         <mkdir dir="${build}/logs/coverage"/>

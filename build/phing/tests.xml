@@ -134,7 +134,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <echo message="${application}"/>
 
         <!-- Find bootstrap file -->
-        <version-match dir="${build-templates}/tests" pattern="bootstrap-(.*).php" returnProperty="bootstrap" version="${environment.joomla.version}"/>
+        <version-match dir="${build-templates}/tests/integration" pattern="bootstrap-(.*).php" returnProperty="bootstrap" version="${environment.joomla.version}"/>
         <fail unless="bootstrap" message="No bootstrap file found for Joomla! ${environment.joomla.version}"/>
 
         <!-- Configure bootstrap file -->
@@ -143,7 +143,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </copy>
 
         <!-- Configure phpunit -->
-        <copy file="${build-templates}/tests/phpunit.xml" tofile="${cms-root}/tests/integration/${application}/phpunit.xml">
+        <copy file="${build-templates}/tests/integration/phpunit.xml" tofile="${cms-root}/tests/integration/${application}/phpunit.xml">
             <filterchain refid="integration-test.configuration"/>
         </copy>
 

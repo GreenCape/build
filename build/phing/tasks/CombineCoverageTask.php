@@ -10,11 +10,30 @@ class CombineCoverageTask extends Task
 	/** @var bool */
 	protected $haltonerror = true; // stop build on errors
 
+	protected $pattern = null;
+	protected $replace = null;
+
 	protected $clover = null;
 	protected $crap4j = null;
 	protected $html = null;
 	protected $php = null;
 	protected $text = null;
+
+	/**
+	 * @param string $pattern
+	 */
+	public function setPattern($pattern)
+	{
+		$this->pattern = '~' . str_replace('~', '\\~', $pattern) . '~';
+	}
+
+	/**
+	 * @param string $replace
+	 */
+	public function setReplace($replace)
+	{
+		$this->replace = $replace;
+	}
 
 	/**
 	 * @param string $clover
@@ -92,6 +111,10 @@ class CombineCoverageTask extends Task
 			$coverage = null;
 			$code = file_get_contents($file);
 			$code = str_replace('PHP_CodeCoverage', 'CoverageCollector', $code);
+			if (!empty($this->pattern))
+			{
+				$code = preg_replace($this->pattern, $this->replace, $code);
+			}
 			eval('?>' . $code);
 			$collection->merge($coverage);
 		}

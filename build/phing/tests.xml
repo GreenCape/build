@@ -118,19 +118,21 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <trycatch property="error">
                     <try>
                         <echo message="Integration test on ${target}" level="info"/>
+                        <delete dir="${cms-root}/build/logs" quiet="true"/>
                         <mkdir dir="${cms-root}/build/logs"/>
 
                         <foreach list="site, administrator" param="application" target="test-integration-app"/>
 
-                        <combine-coverage php="${cms-root}/build/logs/integration-${target}.cov">
+                        <combine-coverage
+                            pattern="/var/www/html/${domain}/" replace="${source}/"
+                            php="${cms-root}/build/logs/integration-${target}.cov">
                             <fileset dir="${cms-root}/build/logs">
-                                <include name="**/integration-${target}-*.cov"/>
+                                <include name="**/*.cov"/>
                             </fileset>
                         </combine-coverage>
                         <copy file="${cms-root}/build/logs/integration-${target}.cov" todir="${build}/logs/coverage">
                             <filterchain>
                                 <replaceregexp>
-                                    <regexp pattern="/var/www/html/${domain}/" replace="${source}/"/>
                                     <regexp pattern="'(.*?)Test::test" replace="'${target}: \1Test::test"/>
                                 </replaceregexp>
                             </filterchain>

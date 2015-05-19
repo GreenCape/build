@@ -15,7 +15,7 @@
     <if>
         <available file="${source}/${manifest.file}" property="manifest.exists"/>
         <then>
-            <xmlproperty file="${source}/${manifest.file}" prefix="package" collapseAttributes="true" keepRoot="false"/>
+            <xmlproperty file="${source}/${manifest.file}" prefix="package" collapseAttributes="false" keepRoot="false"/>
         </then>
         <else>
             <echo message="Manifest file '${manifest.file}' not found." level="warning"/>
@@ -161,6 +161,7 @@
     </target>
 
     <target name="dist-prepare" depends="phpab, dist-clean" description="Create distribution directory">
+        <exportproperties targetfile="props.txt"/>
         <!--
         Installation files
         -->
@@ -197,4 +198,11 @@
         </zip>
     </target>
 
+    <target name="test-target">
+        <combine-coverage php="coverage.cov">
+            <fileset dir="${build}/logs">
+                <include name="**/*.cov"/>
+            </fileset>
+        </combine-coverage>
+    </target>
 </project>

@@ -6,10 +6,7 @@
          timeoutForSmallTests="5">
     <testsuites>
         <testsuite name="system-@TARGET@">
-            <directory suffix="Test.php">.</directory>
-            <exclude>
-                <directory>Pages</directory>
-            </exclude>
+            <directory suffix="Test.php">suites</directory>
         </testsuite>
     </testsuites>
 

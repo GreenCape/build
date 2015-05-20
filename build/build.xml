@@ -69,7 +69,6 @@
     <target name="phpab" description="Generate autoload script" hidden="true">
         <foreach list="administrator/components, components" target="create-autoloader" param="target"/>
         <exec command="phpab --tolerant --basedir . --output autoload.php mocks" dir="${tests}" passthru="true"/>
-        <exec command="phpab --tolerant --basedir ${system-tests} --template ${system-tests}/autoload.php.in --output ${system-tests}/autoload.php ${build}/Selenium" dir="${project.basedir}" passthru="true"/>
     </target>
 
     <target name="create-autoloader" hidden="true">

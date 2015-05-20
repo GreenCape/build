@@ -33,7 +33,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <expandproperties/>
     </filterchain>
 
-    <target name="docker-build" description="Generates the contents and prepares the test containers.">
+    <target name="docker-build" depends="docker-rm, dist-prepare" description="Generates the contents and prepares the test containers.">
         <uptodate property="docker-build.status" targetfile="${server-dockyard}/docker-compose.yml" value="uptodate">
             <fileset refid="source-files"/>
             <fileset refid="integration-test-files"/>
@@ -195,11 +195,23 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <include name="autoload.php"/>
             </fileset>
         </copy>
-        <copy todir="${cms-root}/tests/system/" includeemptydirs="false">
+        <copy todir="${cms-root}/tests/system" includeemptydirs="false">
             <fileset dir="${build-templates}/selenium">
-                <exclude name="server_files"/>
+                <exclude name="server_files/**/*"/>
             </fileset>
         </copy>
+        <exec executable="phpab" dir="${cms-root}/tests/system">
+            <arg line="--tolerant"/>
+            <arg line="--basedir"/><arg path="."/>
+            <arg line="--exclude"/><arg path="*Test.php"/>
+            <arg line="--template"/><arg path="${build-templates}/tests/system/autoload.php.in"/>
+            <arg line="--output"/><arg path="autoload.php"/>
+            <arg path="."/>
+        </exec>
+
+        <!-- Create build directory -->
+        <delete dir="${cms-root}/build" quiet="true"/>
+        <mkdir dir="${cms-root}/build/logs"/>
 
         <!-- Build the database import script -->
         <available file="${cms-root}/installation/sql/${environment.database.engine}" type="dir" property="engine_supported"/>

@@ -1,6 +1,6 @@
 /cache
 /composer.lock
-/coverage
+/report
 /servers
 /vendor
 /versions.json

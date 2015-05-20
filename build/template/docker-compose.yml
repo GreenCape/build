@@ -15,6 +15,7 @@ nginx:
   volumes:
     - ${server-dockyard}/nginx/conf:/etc/nginx/conf.d
     - ${server-dockyard}/nginx/html:/var/www/html
+    - ${build}/vendor:/vendor
   environment:
     DISTFILES: $DISTFILES
   links:

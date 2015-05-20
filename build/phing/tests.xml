@@ -155,7 +155,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <exec command="${cmd}" passthru="true" logoutput="true"/>
     </target>
 
-    <target name="test-system" depends="dist-prepare" description="Runs system tests on all test installations.">
+    <target name="test-system" depends="dist-prepare, docker-start" description="Runs system tests on all test installations.">
         <delete dir="${build}/screenshots" quiet="true"/>
         <mkdir dir="${build}/screenshots"/>
 
@@ -216,12 +216,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <property name="cmd" value='sudo docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/system; /vendor/bin/phpunit"'/>
                 <exec command="${cmd}" passthru="true" logoutput="true"/>
 
-                <combine-coverage php="${cms-root}/build/logs/integration-${target}.cov">
-                    <fileset dir="${cms-root}/build/logs">
-                        <include name="**/*.cov"/>
+                <copy todir="${build}/logs/coverage">
+                    <fileset dir="${cms-root}/build/logs/">
+                        <include name="system-*.cov"/>
                     </fileset>
-                </combine-coverage>
-                <copy file="${cms-root}/build/logs/integration-${target}.cov" todir="${build}/logs/coverage">
                     <filterchain>
                         <replaceregexp>
                             <regexp pattern="/var/www/html/${domain}/" replace="${source}/"/>
@@ -239,20 +237,16 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="test-coverage-report" description="Creates an consolidated HTML coverage report">
-        <mkdir dir="${build}/logs/coverage/report"/>
-        <reflexive>
+        <mkdir dir="${build}/report/coverage"/>
+        <combine-coverage
+            html="${build}/report/coverage">
             <fileset dir="${build}/logs/coverage">
                 <include name="**/*.cov"/>
             </fileset>
-            <filterchain>
-                <replaceregexp>
-                    <regexp pattern="PHP_CodeCoverage" replace="CoverageCollector"/>
-                </replaceregexp>
-            </filterchain>
-        </reflexive>
-        <exec command='php ${build}/bin/Coverage.php' passthru="true" checkreturn="true"/>
+        </combine-coverage>
+
         <reflexive>
-            <fileset dir="${build}/coverage">
+            <fileset dir="${build}/report/coverage">
                 <include name="**/*.html"/>
             </fileset>
             <filterchain>

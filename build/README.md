@@ -60,56 +60,69 @@ In the `build` subdirectory, call Composer to resolve the dependencies.
 
 The Phing build file `build.xml` located in the `build` directory provides a number of useful build targets.
 Most of these targets are implemented in separate files, which can be found in the `build/phing` directory.
- 
-### Docker
 
-#### docker-build
+In your project root directory, create a new `build.xml` file with this content:
 
-This is one of the most complex targets. Depending on the environment definitions read from `tests/servers`,
-it will download the requested Joomla! versions and prepare any Docker container needed to run them on the requested
-web server and database combinations. The volumes and configuration files for the containers are provided in
-`build/servers`, with a subdirectory for each container. A single `docker-compose.yml` is created in the project
-root directory to manage and link the containers.
+    <?xml version="1.0" encoding="UTF-8"?>
+    <project name="Name of your Project" default="build" basedir=".">
+    
+        <!-- Directory layout -->
+        <property name="build" value="${project.basedir}/build"/>
+        <property name="dist" value="${project.basedir}/dist"/>
+        <property name="source" value="${project.basedir}/source"/>
+        <property name="tests" value="${project.basedir}/tests"/>
+    
+        <!-- Package data -->
+        <property name="package.type" value="com_"/>
+        <property name="package.name" value="foobar"/>
+        <property name="manifest.file" value="installation/manifest.xml"/>
+    
+        <!-- supported generators: phpdocumentor2, apigen -->
+        <property name="apidoc.generator" value="apigen"/>
+    
+        <!-- This line does the magic -->
+        <import file="${build}/build.xml"/>
+    
+    </project>
 
-#### docker-rm
+Of course you can and should set the property values according to your environment setup.
 
-Remove the containers, which were built with `docker-build`.
+Then, in your project root directory, issue the command
 
-#### docker-start
-
-Build the containers and run them in the background.
-
-#### docker-stop
-
-Stop and remove the containers.
+    $ phing help
+    
+to list all available build targets with their description and other useful information.
 
 ## Directory Layouts
 
 When using this build and test environment, your directory layout looks like this:
 
     <project>/                      # Your project's root directory
-     +- build/                      # Build related files
-     |   +- cache/                  # [gen] Cache for downloaded Joomla! versions
-     |   +- config/                 # Configuration files 
-     |   +- docker/                 # Definition of individual Docker images
-     |   |   +- mariadb/ 
-     |   +- phing/                  # Phing related files 
-     |   |   +- tasks/              # Custom tasks for Phing
-     |   |   +- *.xml               # Build target definitions, included by build.xml
-     |   |   +- tasks.properties    # Task properties, included by build.xml
-     |   +- servers/                # [gen] Volumes and configuration files for the Docker containers
-     |   +- template/               # Templates for container files
-     |   +- vendor/                 # [gen] Dependencies installed by Composer
-     |   +- build.xml               # The main build file
-     |   +- composer.json           # Description of the dependencies
-     |   +- composer.lock           # [gen] Composer lock file
-     |   +- README.md               # This file
-     |   +- version.json            # [gen] Available Joomla! versions
-     +- dist/                       # [gen] Your project's distribution packages
-     +- docs/                       # Your project's documentation
-     +- source/                     # Your project's source 
-     +- tests/                      # Your project's test sources 
-     +- docker-compose.yml          # [gen] Description of container orchestration
+     |- build/                      # Build related files
+     |   |- bin                     # Executable files, that are not (yet) available through Composer
+     |   |- cache/                  # [gen] Cache for downloaded Joomla! versions
+     |   |- config/                 # Configuration files 
+     |   |- docker/                 # Definition of individual Docker images, that are not (yet) available from DockerHub
+     |   |- logs/                   # [gen] Log files produced by the build and test environment
+     |   |- phing/                  # Phing related files
+     |   |   |- docs/               # Documentation for the custom Phing tasks
+     |   |   |- tasks/              # Custom tasks for Phing
+     |   |   |- *.xml               # Build target definitions, included by build.xml
+     |   |   `- tasks.properties    # Task properties, included by build.xml
+     |   |- report/                 # [gen] HTML reports generated from the log files
+     |   |- servers/                # [gen] Volumes and configuration files for the Docker containers
+     |   |- template/               # Templates for container files
+     |   |- vendor/                 # [gen] Dependencies installed by Composer
+     |   |- build.xml               # The main build file
+     |   |- composer.json           # Description of the dependencies
+     |   |- composer.lock           # [gen] Composer lock file
+     |   |- README.md               # This file
+     |   `- version.json            # [gen] Available Joomla! versions
+     |- dist/                       # [gen] Your project's distribution packages
+     |- docs/                       # Your project's documentation
+     |- source/                     # Your project's source 
+     |- tests/                      # Your project's test sources 
+     `- build.xml                   # Your project's build file
 
 The marker `[gen]` denotes files and directories that will be generated during the build process when needed.
 
@@ -225,10 +238,9 @@ code into a browsable quality report. It is located at
 
 The test coverage report is located at
 
-    file://<your-project's-root>/build/coverage/index.html
+    file://<your-project's-root>/build/report/coverage/index.html
 
-**Currently, it only shows the coverage by the unit tests.
-It is planned to pull the information from the integration tests.**
+It contains the aggregated coverage information from unit tests, integration tests, and system tests.
 
 ### Charts
 

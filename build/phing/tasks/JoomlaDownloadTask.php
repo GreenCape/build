@@ -1,13 +1,15 @@
 <?php
 
 require_once "phing/Task.php";
+require_once __DIR__ . '/traits/ReturnProperty.php';
 
 class JoomlaDownloadTask extends Task
 {
 	protected $version = 'latest';
 	protected $versionFile = 'versions.json';
 	protected $cachePath = 'build';
-	protected $returnProperty = null;
+
+	use ReturnProperty;
 
 	public function setVersion($version)
 	{
@@ -24,19 +26,11 @@ class JoomlaDownloadTask extends Task
 		$this->cachePath = $path;
 	}
 
-	public function setReturnProperty($name)
-	{
-		$this->returnProperty = $name;
-	}
-
 	public function main()
 	{
 		$tarball = $this->getTarball();
 
-		if ($this->returnProperty !== null)
-		{
-			$this->project->setProperty($this->returnProperty, $tarball);
-		}
+		$this->returnValue($tarball);
 	}
 
 	/**

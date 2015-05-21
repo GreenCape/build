@@ -3,6 +3,7 @@
 include_once 'phing/BuildException.php';
 include_once 'phing/Task.php';
 include_once 'phing/tasks/system/condition/Condition.php';
+require_once __DIR__ . '/traits/ReturnProperty.php';
 
 class Docker extends Task
 {
@@ -10,29 +11,11 @@ class Docker extends Task
 	private $containerList = null;
 	private $dir = null;
 	private $state = null;
-	private $returnProperty = null;
-
-	/** Whether to force overwrite of existing property. */
-	protected $override = false;
 
 	private $supportedFileNames = array('docker-compose.yml', 'docker-compose.yaml', 'fig.yml', 'fig.yaml');
 	private $configFile = null;
 
-	/**
-	 * @param string $returnProperty
-	 */
-	public function setReturnProperty($returnProperty)
-	{
-		$this->returnProperty = $returnProperty;
-	}
-
-	/**
-	 * @param $v
-	 */
-	public function setOverride($v)
-	{
-		$this->override = (boolean)$v;
-	}
+	use ReturnProperty;
 
 	/**
 	 * @param string $state
@@ -174,34 +157,5 @@ class Docker extends Task
 		}
 
 		return $filteredContainers;
-	}
-
-	/**
-	 * @param $value
-	 *
-	 * @throws BuildException
-	 */
-	private function returnValue($value)
-	{
-		if (empty($this->returnProperty))
-		{
-			throw new BuildException("'returnProperty' must be set for {$this->getTaskName()}.");
-		}
-		if ($this->override)
-		{
-			$this->getProject()->setProperty($this->returnProperty, $value);
-		}
-		else
-		{
-			$this->getProject()->setNewProperty($this->returnProperty, $value);
-		}
-	}
-
-	/**
-	 * @param array $pieces
-	 */
-	private function returnArray($pieces)
-	{
-		$this->returnValue(implode(',', (array)$pieces));
 	}
 }

@@ -1,13 +1,15 @@
 <?php
 
 require_once "phing/Task.php";
+require_once __DIR__ . '/traits/ReturnProperty.php';
 
 class VersionMatchTask extends Task
 {
 	protected $version;
 	protected $path;
 	protected $pattern;
-	protected $returnProperty = null;
+
+	use ReturnProperty;
 
 	public function setVersion($version)
 	{
@@ -24,19 +26,11 @@ class VersionMatchTask extends Task
 		$this->pattern = $pattern;
 	}
 
-	public function setReturnProperty($property)
-	{
-		$this->returnProperty = $property;
-	}
-
 	public function main()
 	{
 		$file = $this->findBestMatch($this->pattern, $this->path, $this->version);
 
-		if ($this->returnProperty !== null)
-		{
-			$this->project->setProperty($this->returnProperty, $file);
-		}
+		$this->returnValue($file);
 	}
 
 	public function findBestMatch($pattern, $path, $version)

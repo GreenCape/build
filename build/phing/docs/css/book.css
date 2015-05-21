@@ -36,7 +36,7 @@ a:hover {
     content: "";
     width: 447px;
     height: 92px;
-    background-image: url(img/phing.svg);
+    background-image: url(../img/phing.svg);
     display: block;
     margin-bottom: 30px;
 }

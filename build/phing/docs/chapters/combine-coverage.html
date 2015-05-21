@@ -2,7 +2,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>@CHAPTER@ CombineCoverageTask</title>
-        <link rel="stylesheet" type="text/css" href="css/book.css">
+        <link rel="stylesheet" type="text/css" href="../css/book.css">
     </head>
     <body>
         <div class="sect1">
@@ -12,9 +12,9 @@
                 </div>
             </div>
 
-            <p>Aggregate all PHP code coverage reports (usually <code>*.cov</code>) files from a directory and create
+            <p>Aggregate all PHP code coverage reports (usually <code class="literal">*.cov</code>) files from a directory and create
                 one or more reports.</p>
-            <p>The files to aggregate are defined with a <code>fileset</code>.</p>
+            <p>The files to aggregate are defined with a <code class="literal">fileset</code>.</p>
 
             <div class="table">
 
@@ -45,14 +45,14 @@
                                 <td><code class="literal">String</code></td>
                                 <td>A path prefix to be replaced.</td>
                                 <td>n/a</td>
-                                <td>Only if <code>replace</code> is specified.</td>
+                                <td>Only if <code class="literal">replace</code> is specified.</td>
                             </tr>
                             <tr>
                                 <td><code class="literal">replace</code></td>
                                 <td><code class="literal">String</code></td>
-                                <td>The path to replace <code>pattern</code>.</td>
+                                <td>The path to replace <code class="literal">pattern</code>.</td>
                                 <td>n/a</td>
-                                <td>Only if <code>pattern</code> is specified.</td>
+                                <td>Only if <code class="literal">pattern</code> is specified.</td>
                             </tr>
                             <tr>
                                 <td><code class="literal">haltonerror</code></td>
@@ -66,8 +66,8 @@
                                 <td><code class="literal">String</code></td>
                                 <td>Generate code coverage report in Clover XML format in this file.</td>
                                 <td>n/a</td>
-                                <td rowspan="5">One or more of<br />- <code>clover</code>, <br />- <code>crap4j</code>,
-                                    <br />- <code>html</code>, <br />- <code>php</code>, or <br />- <code>text</code> <br />is required.
+                                <td rowspan="5">One or more of<br />- <code class="literal">clover</code>, <br />- <code class="literal">crap4j</code>,
+                                    <br />- <code class="literal">html</code>, <br />- <code class="literal">php</code>, or <br />- <code class="literal">text</code> <br />is required.
                                 </td>
                             </tr>
                             <tr>
@@ -107,8 +107,8 @@
                     </div>
                 </div>
 
-                <pre class="programlisting">&lt;!-- Generate an HTML report from the coverage logs in <code>build/logs</code>. --&gt;
-&lt;!-- All file paths are mapped from <code>/var/www/html/</code> to <code>${source}/</code>.  --&gt;
+                <pre class="programlisting">&lt;!-- Generate an HTML report from the coverage logs in <code class="literal">build/logs</code>. --&gt;
+&lt;!-- All file paths are mapped from <code class="literal">/var/www/html/</code> to <code class="literal">${source}/</code>.  --&gt;
 &lt;combine-coverage
     pattern="/var/www/html/" replace="${source}/"
     html="build/reports/coverage"&gt;

@@ -1,19 +1,28 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>@CHAPTER@ DockerDefTask</title>
-        <link rel="stylesheet" type="text/css" href="css/book.css">
+        <title>@CHAPTER@ FormatInitFileTask</title>
+        <link rel="stylesheet" type="text/css" href="../css/book.css">
     </head>
     <body>
         <div class="sect1">
             <div class="titlepage">
                 <div>
-                    <div><h2 class="title" style="clear: both"><a name="DockerDefTask"></a>@CHAPTER@ DockerDefTask</h2></div>
+                    <div><h2 class="title" style="clear: both"><a name="FormatInitFileTask"></a>@CHAPTER@ FormatInitFileTask</h2></div>
                 </div>
             </div>
 
-            <p>Get a comma separated list of all servers defined in the <code>docker-compose</code> (formerly called <code>fig</code>)
-                configuration file</p>
+            <p>The MySQL server supports initialization with an SQL file at startup.
+                This file has a lot of restrictions
+                (see <a href="https://dev.mysql.com/doc/refman/5.0/en/server-options.html#option_mysqld_init-file">MySQL manual</a>):
+            </p>
+            <ul>
+                <li>statements must not contain more than 20,000 characters</li>
+                <li>comments are not allowed</li>
+                <li>empty lines are not allowed</li>
+            </ul>
+
+            <p>This task re-formats an SQL dump to follow the rules. The input file will be replaced.</p>
 
             <div class="table">
 
@@ -40,24 +49,20 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><code class="literal">dir</code></td>
+                                <td><code class="literal">file</code></td>
                                 <td><code class="literal">String</code></td>
-                                <td>The directory containing the Docker-Compose configuration file.</td>
-                                <td>The current directory</td>
-                                <td>No</td>
-                            </tr>
-                            <tr>
-                                <td><code class="literal">returnProperty</code></td>
-                                <td><code class="literal">String</code></td>
-                                <td>The name of the property to set with the list of containers.</td>
+                                <td>The file to be reformatted.</td>
                                 <td>n/a</td>
                                 <td>Yes</td>
                             </tr>
                             <tr>
-                                <td><code class="literal">override</code></td>
-                                <td><code class="literal">Boolean</code></td>
-                                <td>Allow to override <code>returnProperty</code>, if it already has a value.</td>
-                                <td>False</td>
+                                <td><code class="literal">level</code></td>
+                                <td><code class="literal">String</code></td>
+                                <td>Control the level at which this message is reported. One of
+                                    <code class="literal">error</code>, <code class="literal">warning</code>,
+                                    <code class="literal">info</code>, <code class="literal">verbose</code>,
+                                    <code class="literal">debug</code>.</td>
+                                <td>'<code class="literal">info</code>'</td>
                                 <td>No</td>
                             </tr>
                         </tbody>
@@ -73,10 +78,9 @@
                     </div>
                 </div>
 
-            <pre class="programlisting">&lt;!-- Get a list of all container definitions --&gt;
-&lt;docker-def dir="${dirs.docker}" returnProperty="containers.defined"/&gt;
-&lt;echo message="Defined servers: ${containers.defined}"/&gt;
-&lt;!-- Result: Defined servers: apache,nginx,proxy,php,mysql,pgsql --&gt;
+            <pre class="programlisting">
+&lt;!-- Reformat a MySQL import file --&gt;
+&lt;format-initfile file="import.sql"/&gt;
 </pre>
             </div>
         </div>

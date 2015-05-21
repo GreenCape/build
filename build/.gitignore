@@ -1,5 +1,6 @@
 /cache
 /composer.lock
+/phing/docs/index.html
 /report
 /servers
 /vendor

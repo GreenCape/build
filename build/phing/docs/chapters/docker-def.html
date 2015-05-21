@@ -1,23 +1,19 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>@CHAPTER@ DockerListTask</title>
-        <link rel="stylesheet" type="text/css" href="css/book.css">
+        <title>@CHAPTER@ DockerDefTask</title>
+        <link rel="stylesheet" type="text/css" href="../css/book.css">
     </head>
     <body>
         <div class="sect1">
             <div class="titlepage">
                 <div>
-                    <div><h2 class="title" style="clear: both"><a name="DockerListTask"></a>@CHAPTER@ DockerListTask</h2></div>
+                    <div><h2 class="title" style="clear: both"><a name="DockerDefTask"></a>@CHAPTER@ DockerDefTask</h2></div>
                 </div>
             </div>
 
-            <p>Get a comma separated list of all Docker containers matching the conditions, i.e.,
-                <ul>
-                    <li>name matches the pattern given in <code>container</code></li>
-                    <li>state equals the value given in <code>state</code></li>
-                </ul>
-            </p>
+            <p>Get a comma separated list of all servers defined in the <code class="literal">docker-compose</code> (formerly called <code class="literal">fig</code>)
+                configuration file</p>
 
             <div class="table">
 
@@ -58,23 +54,9 @@
                                 <td>Yes</td>
                             </tr>
                             <tr>
-                                <td><code class="literal">container</code></td>
-                                <td><code class="literal">String</code></td>
-                                <td>A pattern for the container name. Use <code>?</code> and <code>*</code> as wildcards.</td>
-                                <td>'*'</td>
-                                <td>No</td>
-                            </tr>
-                            <tr>
-                                <td><code class="literal">state</code></td>
-                                <td><code class="literal">String</code></td>
-                                <td>Only containers matching this state value will be included.</td>
-                                <td>n/a</td>
-                                <td>No</td>
-                            </tr>
-                            <tr>
                                 <td><code class="literal">override</code></td>
                                 <td><code class="literal">Boolean</code></td>
-                                <td>Allow to override <code>returnProperty</code>, if it already has a value.</td>
+                                <td>Allow to override <code class="literal">returnProperty</code>, if it already has a value.</td>
                                 <td>False</td>
                                 <td>No</td>
                             </tr>
@@ -87,18 +69,14 @@
             <div class="sect2">
                 <div class="titlepage">
                     <div>
-                        <div><h3 class="title">@CHAPTER@.1 Examples</h3></div>
+                        <div><h3 class="title">@CHAPTER@.1 Example</h3></div>
                     </div>
                 </div>
 
-            <pre class="programlisting">&lt;!-- Get a list of all existing containers, regardless of state --&gt;
-&lt;docker-list dir="${dirs.docker}" returnProperty="containers"/&gt;
-
-&lt;!-- Get a list of all running containers --&gt;
-&lt;docker-list dir="/home/develop" state="up" returnProperty="containers"/&gt;
-
-&lt;!-- Get a list of all running containers having 'sql' in their name --&gt;
-&lt;docker-list container="*sql*" state="up" returnProperty="containers"/&gt;
+            <pre class="programlisting">&lt;!-- Get a list of all container definitions --&gt;
+&lt;docker-def dir="${dirs.docker}" returnProperty="containers.defined"/&gt;
+&lt;echo message="Defined servers: ${containers.defined}"/&gt;
+&lt;!-- Result: Defined servers: apache,nginx,proxy,php,mysql,pgsql --&gt;
 </pre>
             </div>
         </div>

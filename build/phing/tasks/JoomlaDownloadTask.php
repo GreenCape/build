@@ -2,7 +2,7 @@
 
 require_once "phing/Task.php";
 
-class DownloadJoomlaTask extends Task
+class JoomlaDownloadTask extends Task
 {
 	protected $version = 'latest';
 	protected $versionFile = 'versions.json';

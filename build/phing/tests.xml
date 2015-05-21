@@ -47,8 +47,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <target name="test-integration" description="Runs integration tests on all test installations.">
         <!-- @todo Make this callable for arbitrary test environments-->
 
-        <mkdir dir="${build}/logs/coverage"/>
-
         <!-- Handle each test environment -->
         <foreach param="environment-definition" target="test-integration-single">
             <fileset dir="${test-environments}">
@@ -156,6 +154,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="test-system" depends="dist-prepare, docker-start" description="Runs system tests on all test installations.">
+        <!-- @todo Make this callable for arbitrary test environments-->
+
         <delete dir="${build}/screenshots" quiet="true"/>
         <mkdir dir="${build}/screenshots"/>
 

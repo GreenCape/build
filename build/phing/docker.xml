@@ -211,7 +211,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
         <!-- Create build directory -->
         <delete dir="${cms-root}/build" quiet="true"/>
-        <mkdir dir="${cms-root}/build/logs"/>
+        <mkdir dir="${cms-root}/build/logs/coverage"/>
 
         <!-- Build the database import script -->
         <available file="${cms-root}/installation/sql/${environment.database.engine}" type="dir" property="engine_supported"/>

@@ -197,10 +197,9 @@
     </target>
 
     <target name="test-target">
-        <combine-coverage php="coverage.cov">
-            <fileset dir="${build}/logs">
-                <include name="**/*.cov"/>
-            </fileset>
-        </combine-coverage>
+        <docker-list dir="${server-dockyard}" returnProperty="containers"/>
+        <echo message="Matching containers: ${containers}"/>
+        <docker-def dir="${server-dockyard}" returnProperty="containers" override="true"/>
+        <echo message="Defined servers: ${containers}"/>
     </target>
 </project>

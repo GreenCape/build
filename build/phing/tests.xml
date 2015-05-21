@@ -239,7 +239,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <target name="test-coverage-report" description="Creates an consolidated HTML coverage report">
         <mkdir dir="${build}/report/coverage"/>
         <combine-coverage
-            html="${build}/report/coverage">
+            html="${build}/report/coverage"
+            clover="${build}/logs/clover.xml">
             <fileset dir="${build}/logs/coverage">
                 <include name="**/*.cov"/>
             </fileset>

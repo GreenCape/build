@@ -1,12 +1,15 @@
 {
   "require": {
-    "php": ">=5.3.3"
-  },
-  "require-dev": {
-    "phing/phing": ">=2.8",
-    "phpunit/phpunit": ">=4.3",
-    "phpunit/php-invoker": "~1.1",
-    "phpunit/dbunit": ">=1.2",
-    "phpunit/phpunit-selenium": ">=1.2"
+    "php": ">=5.3.3",
+    "phing/phing": "@stable",
+    "phpunit/phpunit": "4.*@stable",
+    "pdepend/pdepend": "@stable",
+    "phpmd/phpmd": "2.*@stable",
+    "sebastian/phpcpd": "2.*@stable",
+    "squizlabs/php_codesniffer": "1.5.*@stable",
+    "mayflower/php-codebrowser": "1.*@stable",
+    "phpunit/php-invoker": "@stable",
+    "phpunit/dbunit": "@stable",
+    "phpunit/phpunit-selenium": "@stable"
   }
 }

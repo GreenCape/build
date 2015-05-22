@@ -37,13 +37,13 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <target name="quality-code-browser" description="Aggregates the results from all the measurement tools.">
         <mkdir dir="${build}/report/code-browser"/>
-        <!-- CodeBrowser has an old bug regarding crapThreshold, so remove all crap-values below 10 -->
         <reflexive>
             <fileset dir="${build}/logs">
                 <include name="clover.xml"/>
             </fileset>
             <filterchain>
                 <replaceregexp>
+                    <!-- CodeBrowser has a bug regarding crapThreshold, so remove all crap-values below 10 (i.e., 1 digit) -->
                     <regexp pattern='crap="\d"' replace=""/>
                 </replaceregexp>
             </filterchain>
@@ -70,7 +70,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <phpmd rulesets="${build}/config/phpmd.xml">
             <fileset refid="php-files"/>
             <formatter type="xml" outfile="${build}/logs/pmd.xml"/>
-            <formatter type="html" outfile="${build}/report/mess.html"/>
         </phpmd>
     </target>
 

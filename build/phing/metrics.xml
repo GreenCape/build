@@ -26,12 +26,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 <project name="Quality Metrics Related Targets" default="quality">
 
     <target name="quality" description="Generates a quality report using CodeBrowser.">
-        <!-- parallel -->
-        <phingcall target="quality-depend"/>
-        <phingcall target="quality-mess-detect"/>
-        <phingcall target="quality-copy-paste-detect"/>
-        <phingcall target="quality-check-style"/>
-        <!-- /parallel -->
+        <parallel>
+            <phingcall target="quality-depend"/>
+            <phingcall target="quality-mess-detect"/>
+            <phingcall target="quality-copy-paste-detect"/>
+            <phingcall target="quality-check-style"/>
+        </parallel>
         <phingcall target="quality-code-browser"/>
     </target>
 

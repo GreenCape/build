@@ -15,7 +15,7 @@ class Docker extends Task
 	private $supportedFileNames = array('docker-compose.yml', 'docker-compose.yaml', 'fig.yml', 'fig.yaml');
 	private $configFile = null;
 
-	use ReturnProperty;
+	use ReturnPropertyImplementation;
 
 	/**
 	 * @param string $state

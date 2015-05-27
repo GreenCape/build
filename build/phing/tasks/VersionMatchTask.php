@@ -9,7 +9,7 @@ class VersionMatchTask extends Task
 	protected $path;
 	protected $pattern;
 
-	use ReturnProperty;
+	use ReturnPropertyImplementation;
 
 	public function setVersion($version)
 	{

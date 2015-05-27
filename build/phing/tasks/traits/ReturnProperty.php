@@ -1,6 +1,6 @@
 <?php
 
-trait ReturnProperty
+trait ReturnPropertyImplementation
 {
 	/** @var string Name of the property for the return value */
 	protected $returnProperty = null;

@@ -8,6 +8,9 @@
     "sebastian/phpcpd": "2.*@stable",
     "squizlabs/php_codesniffer": "1.5.*@stable",
     "mayflower/php-codebrowser": "1.*@stable",
+    "apigen/apigen": "@stable",
+    "phpdocumentor/phpdocumentor": "@stable",
+    "davidfuhr/php-plantumlwriter": "@stable",
     "phpunit/php-invoker": "@stable",
     "phpunit/dbunit": "@stable",
     "phpunit/phpunit-selenium": "@stable"

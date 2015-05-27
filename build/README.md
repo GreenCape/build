@@ -24,6 +24,7 @@ In order to use this build and test environment, you need to have
   - [Docker][docker] for lightweight container virtualization
   - [Docker-Compose][fig], a Docker orchestration tool
   - [DNSmasq][dnsmasq], a local lightweight DNS server
+  - [GraphViz][graphviz] for diagrams in the API documentation
 
 properly installed on your development system. Everything else will be retrieved automatically when it is needed.
 
@@ -31,6 +32,7 @@ properly installed on your development system. Everything else will be retrieved
 [docker]: https://www.docker.com/ "Container Virtualization"
 [fig]: https://www.docker.com/ "Docker Orchestration Tool"
 [dnsmasq]: http://www.thekelleys.org.uk/dnsmasq/doc.html "Local DNS Server"
+[graphviz]: http://www.graphviz.org/ "Graph Visualization Software"
 
 ### Configuration of DNSmasq
 

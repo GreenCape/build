@@ -9,7 +9,7 @@ class JoomlaDownloadTask extends Task
 	protected $versionFile = 'versions.json';
 	protected $cachePath = 'build';
 
-	use ReturnProperty;
+	use ReturnPropertyImplementation;
 
 	public function setVersion($version)
 	{

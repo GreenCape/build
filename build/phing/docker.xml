@@ -336,7 +336,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                     <regexp pattern="(\$smtpauth\s*=\s*)(.*?);${p}" replace="\1'0';${r}"/>
                     <regexp pattern="(\$smtpuser\s*=\s*)(.*?);${p}" replace="\1'';${r}"/>
                     <regexp pattern="(\$smtppass\s*=\s*)(.*?);${p}" replace="\1'';${r}"/>
-                    <regexp pattern="(\$smtphost\s*=\s*)(.*?);${p}" replace="\1'localhost:1025';${r}"/>
+                    <regexp pattern="(\$smtphost\s*=\s*)(.*?);${p}" replace="\1'mail:1025';${r}"/>
                     <regexp pattern="(\$smtpsecure\s*=\s*)(.*?);${p}" replace="\1'none';${r}"/>
                     <!-- Cache settings -->
                     <regexp pattern="(\$caching\s*=\s*)(.*?);${p}" replace="\1'${environment.cache.enabled}';${r}"/>
@@ -371,23 +371,55 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="docker-start" description="Starts the test containers, building them only if not existing.">
-        <exec command="docker-compose up --no-recreate -d" dir="${server-dockyard}" passthru="true"/>
-        <!--<exec command="sleep 15"/>--><!-- Give the databases time to load the data -->
+        <if>
+            <available file="${server-dockyard}/docker-compose.yml" property="unused"/>
+            <then>
+                <exec command="docker-compose up --no-recreate -d" dir="${server-dockyard}" passthru="true"/>
+                <!--<exec command="sleep 15"/>--><!-- Give the databases time to load the data -->
+            </then>
+            <else>
+                <echo message="Servers are not set up. Run  phing docker-build  first."/>
+            </else>
+        </if>
     </target>
 
     <target name="docker-up" description="Starts the test containers after rebuilding them.">
-        <exec command="docker-compose up -d" dir="${server-dockyard}" passthru="true"/>
-        <!--<exec command="sleep 15"/>--><!-- Give the databases time to load the data -->
+        <if>
+            <available file="${server-dockyard}/docker-compose.yml" property="unused"/>
+            <then>
+                <exec command="docker-compose up -d" dir="${server-dockyard}" passthru="true"/>
+                <!--<exec command="sleep 15"/>--><!-- Give the databases time to load the data -->
+            </then>
+            <else>
+                <echo message="Servers are not set up. Run  phing docker-build  first."/>
+            </else>
+        </if>
     </target>
 
     <target name="docker-stop" description="Stops and removes the test containers.">
-        <exec command="docker-compose stop" dir="${server-dockyard}"/>
-        <!--<exec command="sleep 2"/>-->
+        <if>
+            <available file="${server-dockyard}/docker-compose.yml" property="unused"/>
+            <then>
+                <exec command="docker-compose stop" dir="${server-dockyard}"/>
+                <!--<exec command="sleep 2"/>-->
+            </then>
+            <else>
+                <echo message="Servers are not set up. Nothing to do."/>
+            </else>
+        </if>
     </target>
 
     <target name="docker-rm" depends="docker-stop" description="Removes the content of test containers.">
-        <exec command="docker-compose rm --force" dir="${server-dockyard}"/>
-        <delete dir="${server-dockyard}" quiet="true"/>
+        <if>
+            <available file="${server-dockyard}/docker-compose.yml" property="unused"/>
+            <then>
+                <exec command="docker-compose rm --force" dir="${server-dockyard}"/>
+                <delete dir="${server-dockyard}" quiet="true"/>
+            </then>
+            <else>
+                <echo message="Servers are not set up. Nothing to do."/>
+            </else>
+        </if>
     </target>
 
 </project>

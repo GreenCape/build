@@ -1,6 +1,16 @@
 FROM php:5.6-apache
 
-RUN apt-get update && apt-get install -y libpqxx-dev
+RUN apt-get update \
+    && apt-get install -y \
+        libpqxx-dev \
+        ruby \
+        ruby-dev \
+        build-essential \
+        sqlite3 \
+        libsqlite3-dev
+
+# Install MailCatcher
+RUN gem install mailcatcher --no-ri --no-rdoc
 
 # Setup the Xdebug version to install
 ENV XDEBUG_VERSION 2.2.7
@@ -24,6 +34,14 @@ COPY php.ini /usr/local/etc/php/
 COPY conf.d/* /usr/local/etc/php/conf.d/
 
 RUN docker-php-ext-install mysql mysqli \
- && docker-php-ext-install pgsql \
- && docker-php-ext-install pdo_mysql pdo_pgsql
+    && docker-php-ext-install pgsql \
+    && docker-php-ext-install pdo_mysql pdo_pgsql
 
+# Cleanup package manager
+RUN apt-get remove --purge -y \
+        build-essential \
+        ruby-dev \
+        libsqlite3-dev \
+    && apt-get autoclean \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

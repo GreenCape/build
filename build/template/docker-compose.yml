@@ -9,6 +9,7 @@ apache:
   links:
     - mysql
     - pgsql:postgresql
+    - mail
 
 nginx:
   image: nginx
@@ -39,6 +40,7 @@ php:
   links:
     - mysql
     - pgsql:postgresql
+    - mail
 
 mysql:
   build: ${build}/docker/mariadb
@@ -58,3 +60,9 @@ pgsql:
     POSTGRES_DB: ${database.postgresql.name}
     POSTGRES_USER: ${database.postgresql.user}
     POSTGRES_PASSWORD: ${database.postgresql.password}
+
+mail:
+  build: ${build}/docker/mailcatcher
+  ports:
+    - "1080:1080"
+    - "1025:1025"

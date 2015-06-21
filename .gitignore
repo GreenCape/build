@@ -1,2 +1,7 @@
+/cache
+/phing/docs/index.html
+/report
+/servers
+/vendor
+/versions.json
 /CHANGELOG.md
-autoload.php

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Name of your Project" default="build" basedir="..">
+
+    <!-- Directory layout -->
+    <property name="build" value="${project.basedir}/build"/>
+    <property name="dist" value="${project.basedir}/dist"/>
+    <property name="source" value="${project.basedir}/source"/>
+    <property name="tests" value="${project.basedir}/tests"/>
+
+    <!-- Package data -->
+    <property name="package.type" value="com_"/>
+    <property name="package.name" value="foobar"/>
+    <property name="manifest.file" value="installation/manifest.xml"/>
+
+    <!-- supported generators: phpdocumentor2, apigen -->
+    <property name="apidoc.generator" value="apigen"/>
+
+    <!-- This line does the magic -->
+    <import file="${build}/phing/build.xml"/>
+
+</project>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="GreenCape Build" default="build" basedir="../">
+<project name="GreenCape Build" default="build" basedir="../../..//">
 
     <import file="${project.basedir}/build/phing/setup.xml"/>
     <import file="${build}/phing/docker.xml"/>
@@ -81,7 +81,7 @@
                     <arg line="--basedir ."/>
                     <arg line="--output autoload.php"/>
                     <arg line="--template autoload.php.in"/>
-                    <arg path="../"/>
+                    <arg path="../../..//"/>
                 </exec>
             </then>
         </if>

@@ -100,7 +100,7 @@ to list all available build targets with their description and other useful info
 When using this build and test environment, your directory layout looks like this:
 
     <project>/                      # Your project's root directory
-     |- build/                      # Build related files
+     |- build/                      # The GreenCape build environment as a git submodule
      |   |- bin                     # Executable files, that are not (yet) available through Composer
      |   |- cache/                  # [gen] Cache for downloaded Joomla! versions
      |   |- config/                 # Configuration files 
@@ -117,7 +117,7 @@ When using this build and test environment, your directory layout looks like thi
      |   |- vendor/                 # [gen] Dependencies installed by Composer
      |   |- build.xml               # The main build file
      |   |- composer.json           # Description of the dependencies
-     |   |- composer.lock           # [gen] Composer lock file
+     |   |- composer.lock           # Composer lock file
      |   |- README.md               # This file
      |   `- version.json            # [gen] Available Joomla! versions
      |- dist/                       # [gen] Your project's distribution packages

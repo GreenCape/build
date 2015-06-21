@@ -38,6 +38,23 @@ class UmlFilter extends Task
 
 	public function main()
 	{
+		$this->validate();
+
+		$aggregate = $this->handleFiles();
+
+		foreach ($aggregate as $group => $fragments)
+		{
+			$this->writePuml(
+				$this->dir . '/package-' . $group . '.puml',
+				implode("\n", array_unique($this->removeIncludes($fragments))) . "\n"
+			);
+		}
+
+		$this->render();
+	}
+
+	private function validate()
+	{
 		if (empty($this->jar))
 		{
 			throw new BuildException("Please provide location of plantuml.jar");
@@ -47,30 +64,27 @@ class UmlFilter extends Task
 		{
 			throw new BuildException("Need either nested fileset or nested filelist to iterate through");
 		}
+	}
 
+	/**
+	 * @return array
+	 * @throws BuildException
+	 */
+	private function handleFiles()
+	{
 		$aggregate = array();
+
 		foreach ($this->getFileSetFiles() as $file)
 		{
 			$code = file_get_contents($file);
 
-			foreach ($this->generateDiagramSource($code) as $level => $fragments)
+			foreach ($this->generateDiagramSource($code) as $group => $fragments)
 			{
-				$aggregate[$level] = array_merge((array) $aggregate[$level], $fragments);
+				$aggregate[$group] = array_merge((array)$aggregate[$group], $fragments);
 			}
 		}
-		foreach ($aggregate as $level => $fragments)
-		{
-			$filename = $this->dir . '/package-' . $level . '.puml';
-			$lines = array_filter(explode("\n", implode("\n", $fragments)), function($line) {
-				return $line[0] != '!';
-			});
-			$uml = implode("\n", array_unique($lines)) . "\n";
-			file_put_contents($filename, "@startuml\n!include skin.puml\n{$uml}@enduml\n");
-		}
 
-		$this->log("Rendering ...");
-		`java -jar '{$this->jar}' -tsvg '{$this->dir}/*.puml'`;
-		$this->log("... done.");
+		return $aggregate;
 	}
 
 	/**
@@ -81,6 +95,7 @@ class UmlFilter extends Task
 		$identifier = '([\S]+)';
 
 		$namespace = '';
+
 		if (preg_match('~namespace\s+(.*?);~', $code, $match))
 		{
 			$namespace = trim(str_replace('\\', '.', $match[1]), '.') . '.';
@@ -90,11 +105,14 @@ class UmlFilter extends Task
 		$extends     = '\s+extends\s+' . $identifier;
 		$implements  = '\s+implements\s+' . $identifier . '(:?\s*,\s*' . $identifier . ')*';
 		$pattern     = "~{$declaration}(:?{$extends})?(:?{$implements})?\s*\{~";
+
 		if (!preg_match_all($pattern, $code, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER))
 		{
 			return array();
 		}
+
 		$classes = array();
+
 		for ($i = 0, $n = count($matches); $i < $n; $i++)
 		{
 			if (isset($matches[$i + 1]))
@@ -106,102 +124,147 @@ class UmlFilter extends Task
 				$classes[$i] = substr($code, $matches[$i][0][1]);
 			}
 		}
-		$aggregate = array('global' => '');
-		$currLevel = '';
-		$parts = explode('.', $namespace);
-		while (!empty($parts))
-		{
-			$currLevel = trim($currLevel . '.' . array_shift($parts), '.');
-			$aggregate[$currLevel] = '';
-		}
+
+		$aggregate = $this->prepareGroups($namespace);
+
 		foreach ($matches as $i => $match)
 		{
 			$uml          = '';
 			$currentClass = $namespace . $match[2][0];
 			$filename     = $this->dir . '/class-' . $currentClass . '.puml';
 			$uml .= "{$match[1][0]} {$currentClass}\n";
+
 			if (!empty($match[4][0]))
 			{
 				$uml .= $this->handleReference($namespace, $currentClass, '<|--', $match[4][0]);
 			}
+
 			if (!empty($match[6][0]))
 			{
 				$uml .= $this->handleReference($namespace, $currentClass, '<|..', $match[6][0]);
 			}
-			file_put_contents($filename, "@startuml\n!include skin.puml\n{$uml}@enduml\n");
+
+			$this->writePuml($filename, $uml);
+			$this->log("Generated class diagram for {$currentClass}");
+
 			foreach ($aggregate as $level => $levelCode)
 			{
-				$aggregate[$level][] = $uml
-;			}
-			$this->log("Generated class diagram for {$currentClass}");
+				$aggregate[$level][] = $uml;
+			}
 
 			$this->handleMethods($currentClass, $classes[$i]);
 		}
+
 		return $aggregate;
 	}
 
 	/**
 	 * @param $namespace
-	 * @param $currentClass
+	 * @param $class
 	 * @param $op
-	 * @param $referencedClass
+	 * @param $reference
 	 *
 	 * @return string
 	 */
-	private function handleReference($namespace, $currentClass, $op, $referencedClass)
+	private function handleReference($namespace, $class, $op, $reference)
 	{
-		$ref = str_replace('\\', '.', $referencedClass);
-		$ref = $ref[0] == '.' ? substr($ref, 1) : $namespace . $ref;
-		$res = "{$ref} {$op} {$currentClass}\n";
-		$res .= $this->includeReferencedClass($ref);
+		$reference = str_replace('\\', '.', $reference);
+		$reference = $reference[0] == '.' ? substr($reference, 1) : $namespace . $reference;
+		$uml       = "{$reference} {$op} {$class}\n";
+		$uml .= $this->includeReferencedClass($reference);
 
-		return $res;
+		return $uml;
 	}
 
 	/**
-	 * @param $className
+	 * @param $class
 	 *
 	 * @return array
 	 */
-	private function includeReferencedClass($className)
+	private function includeReferencedClass($class)
 	{
-		$pUmlCode = '';
+		$uml = '';
 
 		if ($this->includeRef)
 		{
-			$refFile  = "{$this->dir}/class-{$className}.puml";
-			$pUmlCode = "!include {$refFile}\n";
-			touch($refFile);
+			$file = "{$this->dir}/class-{$class}.puml";
+			$uml  = "!include {$file}\n";
+			touch($file);
 		}
 
-		return $pUmlCode;
+		return $uml;
 	}
 
 	/**
-	 * @param $currentClass
-	 * @param $classCode
+	 * @param $class
+	 * @param $code
 	 */
-	private function handleMethods($currentClass, $classCode)
+	private function handleMethods($class, $code)
 	{
-		$pumlCode = "@startuml\n(.*?)@enduml";
-		$access   = "(private|protected|public)";
-		$method   = "{$access}?\s+function\s+(\S+)\s*\(";
-		$pattern  = "~{$pumlCode}.*?{$method}~sm";
-		$matches = array();
-		if (!preg_match_all($pattern, $classCode, $matches, PREG_SET_ORDER))
+		$pattern = "~@startuml\n(.*?)@enduml.*?(private|protected|public)?\s+function\s+(\S+)\s*\(~sm";
+
+		if (!preg_match_all($pattern, $code, $matches, PREG_SET_ORDER))
 		{
 			return;
 		}
+
 		foreach ($matches as $match)
 		{
-			$methodName = $currentClass . '.' . $match[3];
-			$filename   = $this->dir . '/seq-' . $methodName . '.puml';
-			$lines      = preg_split("~\s+\*\s+~", $match[1]);
-			$lines      = implode("\n", $lines);
-			file_put_contents($filename, "@startuml\n!include skin.puml\n{$lines}@enduml\n");
+			$methodName = $class . '.' . $match[3];
+			$this->writePuml($this->dir . '/seq-' . $methodName . '.puml', implode("\n", preg_split("~\s+\*\s+~", $match[1])) . "\n");
 			$this->log("Extracted diagram for {$methodName}()");
 		}
 
 		return;
 	}
+
+	/**
+	 * @param $filename
+	 * @param $uml
+	 */
+	private function writePuml($filename, $uml)
+	{
+		file_put_contents($filename, "@startuml\n!include skin.puml\n{$uml}@enduml\n");
+	}
+
+	/**
+	 * @param $uml
+	 *
+	 * @return array
+	 */
+	private function removeIncludes($uml)
+	{
+		$uml = array_filter(explode("\n", implode("\n", $uml)), function ($line)
+		{
+			return !preg_match('~^!include~', $line);
+		});
+
+		return $uml;
+	}
+
+	private function render()
+	{
+		$this->log("Rendering ...");
+		`java -jar '{$this->jar}' -tsvg '{$this->dir}/*.puml'`;
+		$this->log("... done.");
+	}
+
+	/**
+	 * @param $namespace
+	 *
+	 * @return array
+	 */
+	private function prepareGroups($namespace)
+	{
+		$aggregate = array('global' => '');
+		$currLevel = '';
+		$parts     = explode('.', $namespace);
+		while (!empty($parts))
+		{
+			$currLevel             = trim($currLevel . '.' . array_shift($parts), '.');
+			$aggregate[$currLevel] = '';
+		}
+
+		return $aggregate;
+}
 }

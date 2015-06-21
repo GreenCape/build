@@ -29,11 +29,14 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <property name="apidoc.generator" value="apigen" description="default"/>
     <property name="apidoc.title" value="${phing.project.name} ${package.version} API Documentation"/>
 
-    <target name="document" description="Generates API documentation using the specified generator.">
-        <delete dir="${build}/report/api" quiet="true"/>
-        <mkdir dir="${build}/report/api"/>
+    <target name="document" depends="document-clean, document-uml" description="Generates API documentation using the specified generator.">
         <phingcall target="document-changelog"/>
         <phingcall target="document-${apidoc.generator}"/>
+    </target>
+
+    <target name="document-clean">
+        <delete dir="${build}/report/api" quiet="true"/>
+        <mkdir dir="${build}/report/api"/>
     </target>
 
     <target name="document-phpdocumentor2" description="Generate API documentation using PHPDocumentor2" hidden="true">
@@ -73,6 +76,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <target name="document-apigen" description="Generate API documentation using ApiGen" hidden="true">
         <exec executable="${build}/vendor/bin/apigen" dir="${project.basedir}" passthru="true">
             <arg line="generate"/>
+            <arg line="--template-config=${build}/vendor/apigen/apigen/templates/bootstrap/config.neon"/>
             <arg line="--destination=${build}/report/api"/>
             <arg line="--source=${source}"/>
             <arg line='--title="${apidoc.title}"'/>
@@ -98,7 +102,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <replaceregexp>
                     <regexp pattern="&lt;/head&gt;"
                             replace='&lt;script type="text/javascript" src="resources/jquery.js"&gt;&lt;/script&gt;&lt;script type="text/javascript" src="resources/jquery_plantuml.js"&gt;&lt;/script&gt;&lt;/head&gt;'/>
-                    <regexp pattern="&lt;h4&gt;Startuml&lt;/h4&gt;(\n)\s*&lt;div class=&quot;list&quot;&gt;\s*&lt;p&gt;(.+?)\s*&lt;/p&gt;"
+                    <regexp pattern="&lt;h4&gt;Startuml&lt;/h4&gt;\s*(\n)\s*&lt;div class=&quot;list&quot;&gt;\s*(.+?)\s*&lt;/div&gt;"
                             replace="&lt;h4&gt;UML&lt;/h4&gt;&lt;div class=&quot;list&quot;&gt;&lt;img uml=&quot;\1!include ${build}/report/api/uml/skin.puml\1\2\1&quot;/&gt;" modifiers="sm"/>
                     <regexp pattern="&lt;h4&gt;Enduml&lt;/h4&gt;\s*&lt;div class=&quot;list&quot;&gt;\s*&lt;/div&gt;"
                             replace="" modifiers="sm"/>
@@ -130,51 +134,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </reflexive>
     </target>
 
-    <target name="document-classdiagram">
-        <mkdir dir="${build}/report/api/uml"/>
-        <foreach target="document-classdiagram-file" param="classfile">
-            <fileset dir="${source}">
-                <include name="**/*.php"/>
-            </fileset>
-        </foreach>
-        <echo message="" file="${build}/report/api/uml/all-classes.puml"/>
-        <reflexive file="${build}/report/api/uml/all-classes.puml">
-            <filterchain>
-                <replaceregexp>
-                    <regexp pattern="@enduml\n@startuml" replace="" modifiers="sm"/>
-                </replaceregexp>
-            </filterchain>
-        </reflexive>
-        <reflexive file="${build}/report/api/uml/all-classes.puml">
-            <filterchain>
-                <replaceregexp>
-                    <regexp pattern="@startuml" replace="@startuml\n!include ${build}/report/api/uml/skin.puml" modifiers="sm"/>
-                </replaceregexp>
-            </filterchain>
-        </reflexive>
-    </target>
-
-    <target name="document-classdiagram-file">
-        <php expression="dirname('${classfile}')" returnProperty="classdir" level="debug"/>
-        <mkdir dir="${build}/report/api/uml/${classdir}"/>
-        <exec executable="${build}/vendor/bin/php-plantumlwriter" dir="${project.basedir}" passthru="true">
-            <arg line="write"/>
-            <arg line="--without-constants"/>
-            <arg line="--without-properties"/>
-            <arg line="--without-methods"/>
-            <arg line="${source}/${classfile} > ${build}/report/api/uml/${classfile}.class.puml"/>
-        </exec>
-        <exec command="cat ${build}/report/api/uml/${classfile}.class.puml >> ${build}/report/api/uml/all-classes.puml"/>
-        <reflexive file="${build}/report/api/uml/${classfile}.class.puml">
-            <filterchain>
-                <replaceregexp>
-                    <regexp pattern="@startuml" replace="@startuml\n!include ${build}/report/api/uml/skin.puml" modifiers="sm"/>
-                </replaceregexp>
-            </filterchain>
-        </reflexive>
-    </target>
-
-    <target name="uml">
+    <target name="document-uml">
         <delete dir="${build}/report/api/uml" quiet="true"/>
         <mkdir dir="${build}/report/api/uml"/>
         <copy file="${build}/config/plantuml/skin-bw-gradient.puml" tofile="${build}/report/api/uml/skin.puml"/>

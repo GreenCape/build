@@ -44,7 +44,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </reflexive>
     </target>
 
-    <target name="test-integration" description="Runs integration tests on all test installations.">
+    <target name="test-integration" depends="dist-prepare, docker-start" description="Runs integration tests on all test installations.">
         <!-- @todo Make this callable for arbitrary test environments-->
 
         <!-- Handle each test environment -->
@@ -149,7 +149,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             <filterchain refid="integration-test.configuration"/>
         </copy>
 
-        <property name="cmd" value='sudo docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/integration/${application}; /vendor/bin/phpunit"'/>
+        <property name="cmd" value='docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/integration/${application}; /vendor/bin/phpunit"'/>
         <exec command="${cmd}" passthru="true" logoutput="true"/>
     </target>
 
@@ -213,7 +213,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 </copy>
 
                 <property name="container" value="servers_${environment.server.type}_1"/>
-                <property name="cmd" value='sudo docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/system; /vendor/bin/phpunit"'/>
+                <property name="cmd" value='docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/system; /vendor/bin/phpunit"'/>
                 <exec command="${cmd}" passthru="true" logoutput="true"/>
 
                 <copy todir="${build}/logs/coverage">

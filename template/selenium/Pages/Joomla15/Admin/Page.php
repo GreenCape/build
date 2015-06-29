@@ -19,8 +19,7 @@ class Joomla15_Admin_Page extends Admin_Page
 	 */
 	public function logout()
 	{
-		sleep(1);
-		$userMenu = $this->driver->getElement($this->userMenuSelector);
+		$userMenu = $this->driver->getElement($this->userMenuSelector, 1000);
 		$userMenu->byCssSelector('.logout a')->click();
 
 		return new Joomla15_Admin_LoginPage($this->driver);

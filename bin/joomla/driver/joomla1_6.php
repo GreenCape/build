@@ -56,6 +56,6 @@ namespace Celtic\JoomlaCLI;
  * @link        http://www.bsds.de/
  * @since       File available since Release 1.0.0
  */
-class Joomla1_6Driver extends Joomla2Driver
+class Joomla16Driver extends Joomla2Driver
 {
 }

@@ -53,7 +53,7 @@ class Docker extends Task
 		return call_user_func(
 			array(
 				$this,
-				str_replace('-', '_', $this->getTaskName())
+				'docker' . ucfirst(str_replace('docker-', '', $this->getTaskName()))
 			),
 			$this->filterContainers($this->containerList)
 		);
@@ -68,7 +68,7 @@ class Docker extends Task
 	 *
 	 * @throws BuildException
 	 */
-	protected function docker_list($containers)
+	protected function dockerList($containers)
 	{
 		$this->returnArray(array_keys($containers));
 	}
@@ -78,7 +78,7 @@ class Docker extends Task
 	 *
 	 * @throws BuildException
 	 */
-	protected function docker_def()
+	protected function dockerDef()
 	{
 		preg_match_all('~^(\w+):~sm', file_get_contents($this->dir . '/' . $this->configFile), $match);
 		$this->returnArray($match[1]);

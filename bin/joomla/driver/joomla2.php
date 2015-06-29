@@ -99,21 +99,4 @@ class Joomla2Driver extends JoomlaDriver
 	{
 		return \JFactory::getConfig()->get($key);
 	}
-
-	/**
-	 * @param $manifest
-	 *
-	 * @return array
-	 */
-	public function getExtensionInfo($manifest)
-	{
-		$data                = array();
-		$data['type']        = (string) $manifest['type'];
-		$data['extension']   = (string) $manifest->name;
-		$data['name']        = \JText::_($manifest->name);
-		$data['version']     = (string) $manifest->version;
-		$data['description'] = \JText::_($manifest->description);
-
-		return $data;
-	}
 }

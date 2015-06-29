@@ -130,5 +130,15 @@ abstract class JoomlaDriver
 	 *
 	 * @return array
 	 */
-	abstract public function getExtensionInfo($manifest);
+	public function getExtensionInfo($manifest)
+	{
+		$data                = array();
+		$data['type']        = (string)$manifest['type'];
+		$data['extension']   = (string)$manifest->name;
+		$data['name']        = \JText::_($manifest->name);
+		$data['version']     = (string)$manifest->version;
+		$data['description'] = \JText::_($manifest->description);
+
+		return $data;
+	}
 }

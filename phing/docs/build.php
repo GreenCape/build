@@ -4,7 +4,7 @@
 		<title>GreenCape Extensions to Phing</title>
 		<link rel="stylesheet" type="text/css" href="css/book.css">
 	</head>
-	<?php $contents = readContents(); ?>
+	<?php $contents = Helper::readContents(); ?>
 	<body>
 		<div id="top" class="book">
 			<h1 class="title"><a name="app.greencape"></a>Addendum GC. GreenCape Extensions</h1>
@@ -18,7 +18,7 @@
 
 			<dl class="toc">
 				<dt><span xmlns:d="http://docbook.org/ns/docbook" class="appendix"><a href="#">GC. GreenCape Extensions</a></span></dt>
-				<dd><dl><?php echo getTableOfContents($contents); ?></dl></dd>
+				<dd><dl><?php echo Helper::getTableOfContents($contents); ?></dl></dd>
 			</dl>
 			<?php foreach ($contents as $chapter) : ?>
 				<?php echo $chapter['body']; ?>
@@ -29,48 +29,53 @@
 </html>
 <?php
 
-function readContents()
+class Helper
 {
-	$chapters = glob(__DIR__ . '/chapters/*.html');
-	sort($chapters);
-	$contents = array();
-	$i = 0;
-	foreach ($chapters as $chapter)
+	public static function readContents()
 	{
-		$contents[] = readChapter(++$i, $chapter);
+		$chapters = glob(__DIR__ . '/chapters/*.html');
+		sort($chapters);
+		$contents = array();
+		$i        = 0;
+		foreach ($chapters as $chapter)
+		{
+			$contents[] = self::readChapter(++$i, $chapter);
+		}
+
+		return $contents;
 	}
 
-	return $contents;
-}
-
-function readChapter($i, $file)
-{
-	$chapterNr = 'GC.' . $i;
-	$content = str_replace('@CHAPTER@', $chapterNr, file_get_contents($file));
-	if (!preg_match('~<h2 class="title" style="clear: both"><a name="(.*?)"></a>(.*?)</h2>~sm', $content, $match))
+	public static function readChapter($i, $file)
 	{
-		echo "Unable to retrieve title from $file\n";
-		$match = array(null, '', 'Unknown');
+		$chapterNr = 'GC.' . $i;
+		$content   = str_replace('@CHAPTER@', $chapterNr, file_get_contents($file));
+		if (!preg_match('~<h2 class="title" style="clear: both"><a name="(.*?)"></a>(.*?)</h2>~sm', $content, $match))
+		{
+			echo "Unable to retrieve title from $file\n";
+			$match = array(null, '', 'Unknown');
+		}
+		if (preg_match('~<body>(.*?)</body>~sm', $content, $body))
+		{
+			$content = $body[1];
+		}
+
+		return array(
+			'name'  => $match[1],
+			'title' => $match[2],
+			'body'  => $content
+		);
 	}
-	if (preg_match('~<body>(.*?)</body>~sm', $content, $body))
-		$content = $body[1];
 
-	return array(
-		'name'  => $match[1],
-		'title' => $match[2],
-		'body'  => $content
-	);
-}
-
-function getTableOfContents($contents)
-{
-	$toc = '<ul>';
-	foreach ($contents as $info)
+	public static function getTableOfContents($contents)
 	{
-		$format = '<dt><span xmlns:d="http://docbook.org/ns/docbook" class="sect1"><a href="#%s">%s</a></span></dt>';
-		$toc .= sprintf($format, $info['name'], $info['title']);
-	}
-	$toc .= '</ul>';
+		$toc = '<ul>';
+		foreach ($contents as $info)
+		{
+			$format = '<dt><span xmlns:d="http://docbook.org/ns/docbook" class="sect1"><a href="#%s">%s</a></span></dt>';
+			$toc .= sprintf($format, $info['name'], $info['title']);
+		}
+		$toc .= '</ul>';
 
-	return $toc;
+		return $toc;
+	}
 }

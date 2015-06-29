@@ -1,6 +1,7 @@
 {
   "name": "greencape/build",
   "description": "A docker based test and build environment, especially for Joomla!",
+  "license": "GPL-2",
   "homepage": "https://github.com/GreenCape/build",
   "authors": [
     {

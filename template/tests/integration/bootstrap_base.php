@@ -31,7 +31,7 @@ abstract class BootstrapBase
 	{
 		if (version_compare(PHP_VERSION, $version, '<'))
 		{
-			die("Your host needs to use PHP $version or higher to run this version of Joomla!");
+			throw new ErrorException("Your host needs to use PHP $version or higher to run this version of Joomla!");
 		}
 	}
 

@@ -1,5 +1,5 @@
 <?php
-class Bootstrap1_5 extends BootstrapBase
+class Bootstrap15 extends BootstrapBase
 {
 	protected function getDefines()
 	{
@@ -23,5 +23,5 @@ class Bootstrap1_5 extends BootstrapBase
 	}
 }
 
-$bootstrap = new Bootstrap1_5;
+$bootstrap = new Bootstrap15;
 $bootstrap->init(__FILE__);

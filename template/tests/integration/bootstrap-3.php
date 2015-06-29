@@ -9,7 +9,7 @@ class Bootstrap3 extends BootstrapBase
 
 	protected function initApp()
 	{
-		$app = JFactory::getApplication($this->application);
+		JFactory::getApplication($this->application);
 	}
 }
 

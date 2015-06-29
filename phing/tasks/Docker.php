@@ -140,7 +140,7 @@ class Docker extends Task
 	 */
 	private function filterContainers($availableContainers)
 	{
-		if ($this->state != null)
+		if ($this->state !== null)
 		{
 			$filteredContainers = array();
 			foreach ($availableContainers as $container)

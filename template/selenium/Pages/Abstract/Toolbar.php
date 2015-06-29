@@ -10,7 +10,6 @@ abstract class Toolbar
 
 	/**
 	 * Map menu paths to page classes
-	 *
 	 * Format of each entry is
 	 * 'abstract menu path' => array(
 	 *     'menu' => 'actual corresponding menu path',
@@ -58,30 +57,31 @@ abstract class Toolbar
 		try
 		{
 			$this->item($menuItem);
+
 			return true;
-		}
-		catch (\PHPUnit_Extensions_Selenium2TestCase_WebDriverException $e)
+		} catch (\PHPUnit_Extensions_Selenium2TestCase_WebDriverException $e)
 		{
 			$this->debug($e->getMessage());
 			$this->debug($e->getTraceAsString());
+
 			return false;
 		}
 	}
 
 	/**
-	 * @param $button
+	 * @param $element
 	 *
 	 * @return Page
 	 */
-	public function select($button)
+	public function select($element)
 	{
-		$pageClass = $this->getPageClass($button);
+		$pageClass = $this->getPageClass($element);
 
-		$element = $this->item($button);
-		$this->debug("Clicking element $button (" . $element->getId() . ")\n");
+		$element = $this->item($element);
+		$this->debug("Clicking element $element (" . $element->getId() . ")\n");
 		$element->click();
 
-		return $this->driver->pageFactory_create($pageClass);
+		return $this->driver->pageFactoryCreate($pageClass);
 	}
 
 	public function add($menuItem, $pageClass)
@@ -103,7 +103,7 @@ abstract class Toolbar
 	}
 
 	/**
-	 * @param   string  $menuItem
+	 * @param   string $menuItem
 	 *
 	 * @return  string
 	 */

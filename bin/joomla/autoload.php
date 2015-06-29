@@ -55,10 +55,11 @@ $paths = array(
 
 foreach ($paths as $path)
 {
-    if (@is_dir($path . '/composer') && @is_file($path . '/autoload.php'))
+	$file = $path . '/autoload.php';
+	if (file_exists($file))
     {
-        require_once $path . '/autoload.php';
-        define('JOOMLACLI_COMPOSER_INSTALL', $path . '/autoload.php');
+        require_once $file;
+        define('JOOMLACLI_COMPOSER_INSTALL', $file);
 
         return;
     }
@@ -78,9 +79,9 @@ spl_autoload_register(
                 'celtic\\joomlacli\\abstractcommand' => '/command.php',
                 'celtic\\joomlacli\\driverfactory' => '/driver/factory.php',
                 'celtic\\joomlacli\\installcommand' => '/commands/install.php',
-                'celtic\\joomlacli\\joomla1_5driver' => '/driver/joomla1_5.php',
-                'celtic\\joomlacli\\joomla1_6driver' => '/driver/joomla1_6.php',
-                'celtic\\joomlacli\\joomla1_7driver' => '/driver/joomla1_7.php',
+                'celtic\\joomlacli\\joomla15driver' => '/driver/joomla1_5.php',
+                'celtic\\joomlacli\\joomla16driver' => '/driver/joomla1_6.php',
+                'celtic\\joomlacli\\joomla17driver' => '/driver/joomla1_7.php',
                 'celtic\\joomlacli\\joomla2driver' => '/driver/joomla2.php',
                 'celtic\\joomlacli\\joomla3driver' => '/driver/joomla3.php',
                 'celtic\\joomlacli\\joomladriver' => '/driver/abstract.php',

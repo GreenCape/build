@@ -1,7 +1,7 @@
 <?php
 namespace Celtic\Testing\Joomla;
 
-class Joomla15_Admin_LoginPage extends Joomla15_Admin_Page
+class Joomla15AdminLoginPage extends Joomla15AdminPage
 {
 	public function isCurrent()
 	{
@@ -17,6 +17,6 @@ class Joomla15_Admin_LoginPage extends Joomla15_Admin_Page
 		$this->getElement("id:modlgn_passwd")->value($password);
 		$this->getElement("xpath://a[contains(., 'Login')]")->click();
 
-		return $this->driver->pageFactory_createFromType('Admin_CPanelPage');
+		return $this->driver->pageFactoryCreateFromType('Admin_CPanelPage');
 	}
 }

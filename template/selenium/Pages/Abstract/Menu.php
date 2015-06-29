@@ -3,11 +3,8 @@ namespace Celtic\Testing\Joomla;
 
 use PHPUnit_Extensions_Selenium2TestCase_Element as Element;
 
-abstract class Menu
+abstract class Menu extends Toolbar
 {
-	/** @var  AbstractAdapter */
-	protected $driver;
-
 	/**
 	 * Map menu levels to retrieval information
 	 *
@@ -22,26 +19,6 @@ abstract class Menu
 	 * @var array
 	 */
 	protected $levelMap = array();
-
-	/**
-	 * Map menu paths to page classes
-	 *
-	 * Format of each entry is
-	 * 'abstract menu path' => array(
-	 *     'menu' => 'actual corresponding menu path',
-	 *     'page' => 'Fully\\Qualified\\Class'
-	 * )
-	 *
-	 * @var array
-	 */
-	protected $pageMap = array();
-
-	protected $itemFormat = 'link text:%s';
-
-	public function __construct(AbstractAdapter $driver)
-	{
-		$this->driver = $driver;
-	}
 
 	/**
 	 * @param $menuItem
@@ -81,83 +58,6 @@ abstract class Menu
 			}
 		}
 		return $item;
-	}
-
-	/**
-	 * @param $menuItem
-	 *
-	 * @return bool
-	 */
-	public function itemExists($menuItem)
-	{
-		try
-		{
-			$this->item($menuItem);
-			return true;
-		}
-		catch (\PHPUnit_Extensions_Selenium2TestCase_WebDriverException $e)
-		{
-			$this->debug($e->getMessage());
-			$this->debug($e->getTraceAsString());
-			return false;
-		}
-	}
-
-	/**
-	 * @param $menuItem
-	 *
-	 * @return Page
-	 */
-	public function select($menuItem)
-	{
-		$pageClass = $this->getPageClass($menuItem);
-
-		$element = $this->item($menuItem)->click();
-		#$this->debug("Clicking element $menuItem (" . $element->getId() . ")\n");
-		#$element->click();
-
-		return $this->driver->pageFactory_create($pageClass);
-	}
-
-	public function add($menuItem, $pageClass)
-	{
-		$this->pageMap[$menuItem] = array(
-			'menu' => $menuItem,
-			'page' => $pageClass
-		);
-	}
-
-	public function remove($menuItem)
-	{
-		unset($this->pageMap[$menuItem]);
-	}
-
-	protected function debug($message)
-	{
-		$this->driver->debug($message);
-	}
-
-	/**
-	 * @param   string  $menuItem
-	 *
-	 * @return  string
-	 */
-	protected function getPageClass($menuItem)
-	{
-		if (!isset($this->pageMap[$menuItem]))
-		{
-			$menuItem = 'default';
-		}
-		if (isset($this->pageMap[$menuItem]))
-		{
-			$pageClass = $this->pageMap[$menuItem]['page'];
-		}
-		else
-		{
-			$pageClass = strtr($menuItem, array(' ' => '', '/' => '_'));
-		}
-
-		return $pageClass;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 namespace Celtic\Testing\Joomla;
 
-abstract class Admin_Page extends Page
+abstract class AdminPage extends Page
 {
 	protected $userMenuSelector      = null;
 	protected $messageContainer      = null;
@@ -13,8 +13,8 @@ abstract class Admin_Page extends Page
 	public function __construct(AbstractAdapter $driver)
 	{
 		parent::__construct($driver);
-		$this->menu = $driver->pageFactory_createFromType('Admin_MainMenu');
-		$this->toolbar = $driver->pageFactory_createFromType('Admin_Toolbar');
+		$this->menu = $driver->pageFactoryCreateFromType('Admin_MainMenu');
+		$this->toolbar = $driver->pageFactoryCreateFromType('Admin_Toolbar');
 	}
 
 	/**
@@ -29,7 +29,7 @@ abstract class Admin_Page extends Page
 	}
 
 	/**
-	 * @return Joomla3_Admin_LoginPage
+	 * @return Joomla3AdminLoginPage
 	 */
 	abstract public function logout();
 

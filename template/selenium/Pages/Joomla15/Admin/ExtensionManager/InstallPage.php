@@ -3,7 +3,7 @@ namespace Celtic\Testing\Joomla;
 
 use \PHPUnit_Extensions_Selenium2TestCase_Element as Element;
 
-class Joomla15_Admin_ExtensionManager_InstallPage extends Joomla15_Admin_Page
+class Joomla15AdminExtensionManagerInstallPage extends Joomla15AdminPage
 {
 	public function isCurrent()
 	{
@@ -34,9 +34,8 @@ class Joomla15_Admin_ExtensionManager_InstallPage extends Joomla15_Admin_Page
 	public function installFromUrl($packageUrl)
 	{
 		$this->debug("Installing extension from URL {$packageUrl}.\n");
-		sleep(1);
 
-		$urlField = $this->getElement("id:install_url");
+		$urlField = $this->getElement("id:install_url", 1000);
 		$urlField->clear();
 		$urlField->value($packageUrl);
 		$this->getElement("xpath://input[contains(@onclick, 'submitbutton4()')]")->click();

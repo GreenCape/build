@@ -1,9 +1,9 @@
 <?php
 namespace Celtic\Testing\Joomla;
 
-class Joomla3_Admin_Page extends Admin_Page
+class Joomla3AdminPage extends AdminPage
 {
-	/** @var Joomla3_Admin_MainMenu */
+	/** @var Joomla3AdminMainMenu */
 	public $menu = null;
 
 	protected $userMenuSelector      = 'css selector:nav.navbar ul.pull-right';
@@ -13,12 +13,12 @@ class Joomla3_Admin_Page extends Admin_Page
 	public function __construct($driver)
 	{
 		parent::__construct($driver);
-		$this->menu = new Joomla3_Admin_MainMenu($driver);
-		$this->toolbar = new Joomla3_Admin_Toolbar($driver);
+		$this->menu = new Joomla3AdminMainMenu($driver);
+		$this->toolbar = new Joomla3AdminToolbar($driver);
 	}
 
 	/**
-	 * @return Joomla3_Admin_LoginPage
+	 * @return Joomla3AdminLoginPage
 	 */
 	public function logout()
 	{
@@ -27,6 +27,6 @@ class Joomla3_Admin_Page extends Admin_Page
 
 		$userMenu->byLinkText('Logout')->click();
 
-		return new Joomla3_Admin_LoginPage($this->driver);
+		return new Joomla3AdminLoginPage($this->driver);
 	}
 }

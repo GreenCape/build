@@ -7,8 +7,6 @@
 
 namespace Celtic\Testing\Joomla;
 
-use \PHPUnit_Extensions_Selenium2TestCase_Element as WebElement;
-
 class Version3Adapter extends AbstractAdapter
 {
 	/** @var string The class prefix for this family */

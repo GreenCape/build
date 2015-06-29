@@ -5,11 +5,11 @@ require_once __DIR__ . '/traits/FileSet.php';
 
 class UmlFilter extends Task
 {
-	private $file;
-	private $dir;
-	private $skin;
-	private $jar;
-	private $includeRef = true;
+	protected $file;
+	protected $dir;
+	protected $skin;
+	protected $jar;
+	protected $includeRef = true;
 
 	use FileSetImplementation;
 
@@ -53,7 +53,7 @@ class UmlFilter extends Task
 		$this->render();
 	}
 
-	private function validate()
+	protected function validate()
 	{
 		if (empty($this->jar))
 		{
@@ -70,7 +70,7 @@ class UmlFilter extends Task
 	 * @return array
 	 * @throws BuildException
 	 */
-	private function handleFiles()
+	protected function handleFiles()
 	{
 		$aggregate = array();
 
@@ -90,7 +90,7 @@ class UmlFilter extends Task
 	/**
 	 * @param $matches
 	 */
-	private function generateDiagramSource($code)
+	protected function generateDiagramSource($code)
 	{
 		$identifier = '([\S]+)';
 
@@ -166,7 +166,7 @@ class UmlFilter extends Task
 	 *
 	 * @return string
 	 */
-	private function handleReference($namespace, $class, $op, $reference)
+	protected function handleReference($namespace, $class, $op, $reference)
 	{
 		$reference = str_replace('\\', '.', $reference);
 		$reference = $reference[0] == '.' ? substr($reference, 1) : $namespace . $reference;
@@ -181,7 +181,7 @@ class UmlFilter extends Task
 	 *
 	 * @return array
 	 */
-	private function includeReferencedClass($class)
+	protected function includeReferencedClass($class)
 	{
 		$uml = '';
 
@@ -199,7 +199,7 @@ class UmlFilter extends Task
 	 * @param $class
 	 * @param $code
 	 */
-	private function handleMethods($class, $code)
+	protected function handleMethods($class, $code)
 	{
 		$pattern = "~@startuml\n(.*?)@enduml.*?(private|protected|public)?\s+function\s+(\S+)\s*\(~sm";
 
@@ -222,7 +222,7 @@ class UmlFilter extends Task
 	 * @param $filename
 	 * @param $uml
 	 */
-	private function writePuml($filename, $uml)
+	protected function writePuml($filename, $uml)
 	{
 		file_put_contents($filename, "@startuml\n!include skin.puml\n{$uml}@enduml\n");
 	}
@@ -232,7 +232,7 @@ class UmlFilter extends Task
 	 *
 	 * @return array
 	 */
-	private function removeIncludes($uml)
+	protected function removeIncludes($uml)
 	{
 		$uml = array_filter(explode("\n", implode("\n", $uml)), function ($line)
 		{
@@ -242,7 +242,7 @@ class UmlFilter extends Task
 		return $uml;
 	}
 
-	private function render()
+	protected function render()
 	{
 		$this->log("Rendering ...");
 		`java -jar '{$this->jar}' -tsvg '{$this->dir}/*.puml'`;
@@ -254,7 +254,7 @@ class UmlFilter extends Task
 	 *
 	 * @return array
 	 */
-	private function prepareGroups($namespace)
+	protected function prepareGroups($namespace)
 	{
 		$aggregate = array('global' => '');
 		$currLevel = '';

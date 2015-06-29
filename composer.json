@@ -1,4 +1,15 @@
 {
+  "name": "greencape/build",
+  "description": "A docker based test and build environment, especially for Joomla!",
+  "license": "MIT",
+  "homepage": "https://github.com/GreenCape/build",
+  "authors": [
+    {
+      "name": "Niels Braczek",
+      "email": "nbraczek@bsds.de",
+      "role": "lead"
+    }
+  ],
   "require": {
     "php": ">=5.3.3",
     "phing/phing": "@stable",

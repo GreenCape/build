@@ -72,7 +72,7 @@ class DriverFactory
 		$parts = explode('.', $this->loadVersion($basePath)->getShortVersion());
 		while (!empty($parts))
 		{
-			$version = implode('_', $parts);
+			$version = implode('', $parts);
 			$classname = __NAMESPACE__ . '\\Joomla' . $version . 'Driver';
 			if (class_exists($classname))
 			{
@@ -108,7 +108,7 @@ class DriverFactory
 				$code = file_get_contents($basePath . $location);
 				$code = str_replace("defined('JPATH_BASE')", "defined('_JEXEC')", $code);
 				eval('?>' . $code);
-				$classes = get_declared_classes();
+
 				return new \JVersion;
 			}
 		}

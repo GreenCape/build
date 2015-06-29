@@ -1,19 +1,17 @@
 <?php
 
-include_once 'phing/BuildException.php';
-include_once 'phing/Task.php';
-include_once 'phing/tasks/system/condition/Condition.php';
+require_once 'vendor/autoload.php';
 require_once __DIR__ . '/traits/ReturnProperty.php';
 
 class Docker extends Task
 {
-	private $container = '*';
-	private $containerList = null;
-	private $dir = null;
-	private $state = null;
+	protected $container = '*';
+	protected $containerList = null;
+	protected $dir = null;
+	protected $state = null;
 
-	private $supportedFileNames = array('docker-compose.yml', 'docker-compose.yaml', 'fig.yml', 'fig.yaml');
-	private $configFile = null;
+	protected $supportedFileNames = array('docker-compose.yml', 'docker-compose.yaml', 'fig.yml', 'fig.yaml');
+	protected $configFile = null;
 
 	use ReturnPropertyImplementation;
 
@@ -53,7 +51,7 @@ class Docker extends Task
 		return call_user_func(
 			array(
 				$this,
-				str_replace('-', '_', $this->getTaskName())
+				'docker' . ucfirst(str_replace('docker-', '', $this->getTaskName()))
 			),
 			$this->filterContainers($this->containerList)
 		);
@@ -68,7 +66,7 @@ class Docker extends Task
 	 *
 	 * @throws BuildException
 	 */
-	private function docker_list($containers)
+	protected function dockerList($containers)
 	{
 		$this->returnArray(array_keys($containers));
 	}
@@ -78,13 +76,13 @@ class Docker extends Task
 	 *
 	 * @throws BuildException
 	 */
-	private function docker_def()
+	protected function dockerDef()
 	{
 		preg_match_all('~^(\w+):~sm', file_get_contents($this->dir . '/' . $this->configFile), $match);
 		$this->returnArray($match[1]);
 	}
 
-	private function getContainerInfo()
+	protected function getContainerInfo()
 	{
 		$oldDir = getcwd();
 		if (empty($this->dir))
@@ -116,7 +114,7 @@ class Docker extends Task
 		$this->log(" - Found " . count($this->containerList) . " containers", Project::MSG_DEBUG);
 	}
 
-	private function checkConfigurationFile()
+	protected function checkConfigurationFile()
 	{
 		$this->configFile = null;
 		foreach ($this->supportedFileNames as $filename)
@@ -138,9 +136,9 @@ class Docker extends Task
 	 *
 	 * @return array
 	 */
-	private function filterContainers($availableContainers)
+	protected function filterContainers($availableContainers)
 	{
-		if ($this->state != null)
+		if ($this->state !== null)
 		{
 			$filteredContainers = array();
 			foreach ($availableContainers as $container)

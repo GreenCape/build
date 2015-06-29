@@ -1,8 +1,6 @@
 <?php
 
-include_once 'phing/BuildException.php';
-include_once 'phing/Task.php';
-include_once 'phing/tasks/system/condition/Condition.php';
+require_once 'vendor/autoload.php';
 require_once __DIR__ . '/traits/ReturnProperty.php';
 
 class Docker extends Task

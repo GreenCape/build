@@ -185,7 +185,7 @@ abstract class AbstractAdapter extends PHPUnit_Extensions_Selenium2TestCase
 		$cookies->add('PHPUNIT_SELENIUM_TEST_ID', $this->getTestId())->set();
 
 		/** @var Joomla3AdminLoginPage $loginPage */
-		$loginPage = $this->pageFactory_createFromType('Admin_LoginPage');
+		$loginPage = $this->pageFactoryCreateFromType('Admin_LoginPage');
 		if (!$loginPage->isCurrent())
 		{
 			$loginPage->logout();
@@ -230,9 +230,9 @@ abstract class AbstractAdapter extends PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return Page
 	 */
-	public function pageFactory_create($pageClass)
+	public function pageFactoryCreate($pageClass)
 	{
-		$page = $this->pageFactory_extendMenu(new $pageClass($this));
+		$page = $this->pageFactoryExtendMenu(new $pageClass($this));
 		$this->debug("Created " . str_replace($this->getPrefix() . '_', '', get_class($page)) . "\n");
 
 		return $page;
@@ -243,9 +243,9 @@ abstract class AbstractAdapter extends PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return Page
 	 */
-	public function pageFactory_createFromType($pageType)
+	public function pageFactoryCreateFromType($pageType)
 	{
-		return $this->pageFactory_create($this->getPrefix() . '_' . $pageType);
+		return $this->pageFactoryCreate($this->getPrefix() . '_' . $pageType);
 	}
 
 	/**
@@ -253,7 +253,7 @@ abstract class AbstractAdapter extends PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return Page
 	 */
-	public function pageFactory_extendMenu($pageObject)
+	public function pageFactoryExtendMenu($pageObject)
 	{
 		if (isset($this->menuMapExtension) && !empty($pageObject->menu))
 		{

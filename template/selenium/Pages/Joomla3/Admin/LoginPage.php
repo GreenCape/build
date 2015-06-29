@@ -17,6 +17,6 @@ class Joomla3AdminLoginPage extends Joomla3AdminPage
 		$this->getElement("id:mod-login-password")->value($password);
 		$this->getElement("xpath://button[contains(., 'Log in')]")->click();
 
-		return $this->driver->pageFactory_createFromType('Admin_CPanelPage');
+		return $this->driver->pageFactoryCreateFromType('Admin_CPanelPage');
 	}
 }

@@ -81,7 +81,7 @@ abstract class Toolbar
 		$this->debug("Clicking element $element (" . $element->getId() . ")\n");
 		$element->click();
 
-		return $this->driver->pageFactory_create($pageClass);
+		return $this->driver->pageFactoryCreate($pageClass);
 	}
 
 	public function add($menuItem, $pageClass)

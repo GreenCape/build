@@ -200,11 +200,14 @@ class CombineCoverageTask extends Task
 		}
 
 		$GLOBALS['_SERVER']['SCRIPT_NAME'] = '-';
-		ob_start();
-		@include $pharLocation;
-		ob_end_clean();
+		if (file_exists($pharLocation))
+		{
+			ob_start();
+			include $pharLocation;
+			ob_end_clean();
 
-		@include_once 'PHPUnit/Autoload.php';
+			include_once 'PHPUnit/Autoload.php';
+		}
 
 		if (!class_exists('PHP_CodeCoverage'))
 		{

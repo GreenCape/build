@@ -55,10 +55,11 @@ $paths = array(
 
 foreach ($paths as $path)
 {
-    if (@is_dir($path . '/composer') && @is_file($path . '/autoload.php'))
+	$file = $path . '/autoload.php';
+	if (file_exists($file))
     {
-        require_once $path . '/autoload.php';
-        define('JOOMLACLI_COMPOSER_INSTALL', $path . '/autoload.php');
+        require_once $file;
+        define('JOOMLACLI_COMPOSER_INSTALL', $file);
 
         return;
     }

@@ -7,13 +7,13 @@ require_once __DIR__ . '/traits/ReturnProperty.php';
 
 class Docker extends Task
 {
-	private $container = '*';
-	private $containerList = null;
-	private $dir = null;
-	private $state = null;
+	protected $container = '*';
+	protected $containerList = null;
+	protected $dir = null;
+	protected $state = null;
 
-	private $supportedFileNames = array('docker-compose.yml', 'docker-compose.yaml', 'fig.yml', 'fig.yaml');
-	private $configFile = null;
+	protected $supportedFileNames = array('docker-compose.yml', 'docker-compose.yaml', 'fig.yml', 'fig.yaml');
+	protected $configFile = null;
 
 	use ReturnPropertyImplementation;
 
@@ -68,7 +68,7 @@ class Docker extends Task
 	 *
 	 * @throws BuildException
 	 */
-	private function docker_list($containers)
+	protected function docker_list($containers)
 	{
 		$this->returnArray(array_keys($containers));
 	}
@@ -78,13 +78,13 @@ class Docker extends Task
 	 *
 	 * @throws BuildException
 	 */
-	private function docker_def()
+	protected function docker_def()
 	{
 		preg_match_all('~^(\w+):~sm', file_get_contents($this->dir . '/' . $this->configFile), $match);
 		$this->returnArray($match[1]);
 	}
 
-	private function getContainerInfo()
+	protected function getContainerInfo()
 	{
 		$oldDir = getcwd();
 		if (empty($this->dir))
@@ -116,7 +116,7 @@ class Docker extends Task
 		$this->log(" - Found " . count($this->containerList) . " containers", Project::MSG_DEBUG);
 	}
 
-	private function checkConfigurationFile()
+	protected function checkConfigurationFile()
 	{
 		$this->configFile = null;
 		foreach ($this->supportedFileNames as $filename)
@@ -138,7 +138,7 @@ class Docker extends Task
 	 *
 	 * @return array
 	 */
-	private function filterContainers($availableContainers)
+	protected function filterContainers($availableContainers)
 	{
 		if ($this->state !== null)
 		{

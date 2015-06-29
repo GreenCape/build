@@ -1,7 +1,7 @@
 <?php
 namespace Celtic\Testing\Joomla;
 
-abstract class Admin_Page extends Page
+abstract class AdminPage extends Page
 {
 	protected $userMenuSelector      = null;
 	protected $messageContainer      = null;
@@ -29,7 +29,7 @@ abstract class Admin_Page extends Page
 	}
 
 	/**
-	 * @return Joomla3_Admin_LoginPage
+	 * @return Joomla3AdminLoginPage
 	 */
 	abstract public function logout();
 

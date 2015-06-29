@@ -1,7 +1,7 @@
 <?php
 namespace Celtic\Testing\Joomla;
 
-class Joomla25_Admin_MainMenu extends Menu
+class Joomla25AdminMainMenu extends Menu
 {
 	protected $levelMap = array(
 		array(
@@ -21,12 +21,12 @@ class Joomla25_Admin_MainMenu extends Menu
 	protected $pageMap = array(
 		'Extension Manager' => array(
 			'menu' => 'Extensions/Extension Manager',
-			'page' => 'Celtic\\Testing\\Joomla\\Joomla25_Admin_ExtensionManager_InstallPage',
+			'page' => 'Celtic\\Testing\\Joomla\\Joomla25AdminExtensionManagerInstallPage',
 		),
 		'Control Panel' => array(
 			'menu' => 'System/Control Panel',
-			'page' => 'Celtic\\Testing\\Joomla\\Joomla25_Admin_CPanelPage',
+			'page' => 'Celtic\\Testing\\Joomla\\Joomla25AdminCPanelPage',
 		),
-		'default' => array('page' => 'Celtic\\Testing\\Joomla\\Joomla25_Admin_Page')
+		'default' => array('page' => 'Celtic\\Testing\\Joomla\\Joomla25AdminPage')
 	);
 }

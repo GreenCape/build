@@ -3,7 +3,7 @@ namespace Celtic\Testing\Joomla;
 
 use \PHPUnit_Extensions_Selenium2TestCase_Element as Element;
 
-class Joomla25_Admin_ExtensionManager_InstallPage extends Joomla25_Admin_Page
+class Joomla25AdminExtensionManagerInstallPage extends Joomla25AdminPage
 {
 	public function isCurrent()
 	{

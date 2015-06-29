@@ -1,7 +1,7 @@
 <?php
 namespace Celtic\Testing\Joomla;
 
-class Joomla25_Admin_Page extends Admin_Page
+class Joomla25AdminPage extends AdminPage
 {
 	protected $userMenuSelector      = 'css selector:#header-box #module-status';
 	protected $messageContainer      = "id:system-message-container";
@@ -10,18 +10,18 @@ class Joomla25_Admin_Page extends Admin_Page
 	public function __construct($driver)
 	{
 		parent::__construct($driver);
-		$this->menu = new Joomla25_Admin_MainMenu($driver);
-		$this->toolbar = new Joomla25_Admin_Toolbar($driver);
+		$this->menu = new Joomla25AdminMainMenu($driver);
+		$this->toolbar = new Joomla25AdminToolbar($driver);
 	}
 
 	/**
-	 * @return Joomla25_Admin_LoginPage
+	 * @return Joomla25AdminLoginPage
 	 */
 	public function logout()
 	{
 		$userMenu = $this->driver->getElement($this->userMenuSelector);
 		$userMenu->byCssSelector('.logout a')->click();
 
-		return new Joomla25_Admin_LoginPage($this->driver);
+		return new Joomla25AdminLoginPage($this->driver);
 	}
 }

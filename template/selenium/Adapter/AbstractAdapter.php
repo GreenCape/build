@@ -165,7 +165,7 @@ abstract class AbstractAdapter extends PHPUnit_Extensions_Selenium2TestCase
 	 * @param   string  $username  Optional username. If omitted, the SeleniumConfig value is used.
 	 * @param   string  $password  Optional password. If omitted, the SeleniumConfig value is used.
 	 *
-	 * @return  Joomla3_Admin_CPanelPage
+	 * @return  Joomla3AdminCPanelPage
 	 */
 	protected function loginToBackend($username = null, $password = null)
 	{
@@ -184,7 +184,7 @@ abstract class AbstractAdapter extends PHPUnit_Extensions_Selenium2TestCase
 		$cookies->remove('PHPUNIT_SELENIUM_TEST_ID');
 		$cookies->add('PHPUNIT_SELENIUM_TEST_ID', $this->getTestId())->set();
 
-		/** @var Joomla3_Admin_LoginPage $loginPage */
+		/** @var Joomla3AdminLoginPage $loginPage */
 		$loginPage = $this->pageFactory_createFromType('Admin_LoginPage');
 		if (!$loginPage->isCurrent())
 		{

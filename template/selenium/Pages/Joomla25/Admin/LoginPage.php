@@ -1,7 +1,7 @@
 <?php
 namespace Celtic\Testing\Joomla;
 
-class Joomla25_Admin_LoginPage extends Joomla25_Admin_Page
+class Joomla25AdminLoginPage extends Joomla25AdminPage
 {
 	public function isCurrent()
 	{

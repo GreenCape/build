@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a1c9775ab34e0f689fb8032eb4a83dbf",
+    "hash": "6ce12ad92999761febdde262593f505c",
     "packages": [
         {
             "name": "andrewsville/php-token-reflection",
@@ -545,6 +545,59 @@
                 "parser"
             ],
             "time": "2015-04-29 20:22:24"
+        },
+        {
+            "name": "greencape/joomla-cli",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/GreenCape/joomla-cli.git",
+                "reference": "eaf684827e2c299e58397b563fb5903d500571c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/GreenCape/joomla-cli/zipball/eaf684827e2c299e58397b563fb5903d500571c6",
+                "reference": "eaf684827e2c299e58397b563fb5903d500571c6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "sebastian/finder-facade": "*",
+                "sebastian/git": "*",
+                "symfony/console": "~2.2"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "phpunit/phpunit": "~4"
+            },
+            "bin": [
+                "joomla"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Niels Braczek",
+                    "email": "nbraczek@bsds.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "A tool for managing Joomla! installations from the command line.",
+            "homepage": "https://github.com/GreenCape/joomla-cli",
+            "time": "2015-06-30 16:35:35"
         },
         {
             "name": "herrera-io/json",
@@ -1954,16 +2007,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.1.6",
+            "version": "2.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "631e365cf26bb2c078683e8d9bcf8bc631ac4d44"
+                "reference": "07e27765596d72c378a6103e80da5d84e802f1e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/631e365cf26bb2c078683e8d9bcf8bc631ac4d44",
-                "reference": "631e365cf26bb2c078683e8d9bcf8bc631ac4d44",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/07e27765596d72c378a6103e80da5d84e802f1e4",
+                "reference": "07e27765596d72c378a6103e80da5d84e802f1e4",
                 "shasum": ""
             },
             "require": {
@@ -2012,7 +2065,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-06-19 07:11:55"
+            "time": "2015-06-30 06:52:35"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -2774,6 +2827,51 @@
             "description": "FinderFacade is a convenience wrapper for Symfony's Finder component.",
             "homepage": "https://github.com/sebastianbergmann/finder-facade",
             "time": "2015-06-04 08:11:58"
+        },
+        {
+            "name": "sebastian/git",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/git.git",
+                "reference": "2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/git/zipball/2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b",
+                "reference": "2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de"
+                }
+            ],
+            "description": "Simple wrapper for Git",
+            "homepage": "http://www.github.com/sebastianbergmann/git",
+            "keywords": [
+                "git"
+            ],
+            "time": "2015-04-06 16:23:43"
         },
         {
             "name": "sebastian/global-state",

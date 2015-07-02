@@ -104,7 +104,7 @@
 
     <target name="inst-install" description="Install the AUT on a test installation" hidden="true">
         <echo message="Installing ${phing.project.name} version ${package.version} on ${target}"/>
-        <exec executable="${build}/bin/joomla.php" passthru="true">
+        <exec executable="${build}/vendor/bin/joomla" passthru="true">
             <arg line="install --ansi -vvv --basepath='${test.basedir}/${target}/source' '${dist.basedir}.zip'"/>
         </exec>
     </target>

@@ -1,6 +1,5 @@
 <?php
 
-require_once "phing/Task.php";
 require_once __DIR__ . '/traits/FileSet.php';
 
 class UmlFilter extends Task

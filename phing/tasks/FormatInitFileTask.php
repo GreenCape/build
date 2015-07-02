@@ -1,7 +1,5 @@
 <?php
 
-require_once "phing/Task.php";
-
 class FormatInitFileTask extends Task
 {
 	private $file;

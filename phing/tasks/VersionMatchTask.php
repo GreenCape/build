@@ -1,6 +1,5 @@
 <?php
 
-require_once "phing/Task.php";
 require_once __DIR__ . '/traits/ReturnProperty.php';
 
 class VersionMatchTask extends Task

@@ -1,8 +1,5 @@
 <?php
 
-require_once 'phing/Task.php';
-require_once 'phing/system/io/FileSystem.php';
-
 trait FileSetImplementation
 {
 	/** @var FileSet[] */

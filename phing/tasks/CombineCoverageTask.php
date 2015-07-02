@@ -1,6 +1,5 @@
 <?php
 
-require_once "phing/Task.php";
 require_once __DIR__ . "/CoverageCollector.php";
 
 class CombineCoverageTask extends Task

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5932a0df2919797fab051c54ac171673",
+    "hash": "85baa8e04681aec8ce1fea794c48c314",
     "packages": [
         {
             "name": "andrewsville/php-token-reflection",
@@ -593,7 +593,7 @@
         },
         {
             "name": "greencape/phing-tasks",
-            "version": "dev-master",
+            "version": "0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GreenCape/phing-tasks.git",
@@ -4615,8 +4615,7 @@
         "davidfuhr/php-plantumlwriter": 0,
         "phpunit/php-invoker": 0,
         "phpunit/dbunit": 0,
-        "phpunit/phpunit-selenium": 0,
-        "greencape/phing-tasks": 20
+        "phpunit/phpunit-selenium": 0
     },
     "prefer-stable": false,
     "prefer-lowest": false,

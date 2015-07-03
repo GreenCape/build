@@ -12,7 +12,7 @@ php:
   - hhvm
 
 script:
-  - phpunit --configuration ./build/travis-ci.xml
+  - phpunit --configuration ./config/travis-ci.xml
 
 matrix:
   allow_failures:

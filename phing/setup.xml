@@ -25,7 +25,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <project name="Setup" default="none">
 
-    <taskdef file="${project.basedir}/build/phing/tasks.properties"/>
+    <taskdef file="${project.basedir}/build/vendor/greencape/phing-tasks/tasks.properties"/>
 
     <property name="project.name" value="${phing.project.name}"/>
     <property name="build" value="${project.basedir}/build" description="default"/>

@@ -26,6 +26,7 @@
     "phpunit/dbunit": "@stable",
     "phpunit/phpunit-selenium": "@stable",
     "greencape/joomla-cli": "~0.1",
-    "greencape/phing-tasks": "dev-master"
+    "greencape/phing-tasks": "dev-master",
+    "greencape/joomla-cs": "~0.2"
   }
 }

@@ -53,23 +53,18 @@ if (!isset($_COOKIE['PHPUNIT_SELENIUM_TEST_ID']) && isset($_GET['PHPUNIT_SELENIU
 {
 	setcookie('PHPUNIT_SELENIUM_TEST_ID', $_GET['PHPUNIT_SELENIUM_TEST_ID']);
 }
-if (!isset($GLOBALS['PHPUNIT_COVERAGE_DATA_DIRECTORY'])) {
-    $GLOBALS['PHPUNIT_COVERAGE_DATA_DIRECTORY'] = FALSE;
-}
-#file_put_contents(
-#	'/home/nibra/Development/Celtic Database/build/logs/J3-latest/cookies.txt',
-#	"\n" . $_SERVER['REQUEST_METHOD'] . ' http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-#	FILE_APPEND
-#);
-#file_put_contents(
-#	'/home/nibra/Development/Celtic Database/build/logs/J3-latest/cookies.txt',
-#	"\n$_COOKIE = " . print_r($_COOKIE, true),
-#	FILE_APPEND
-#);
-if ( isset($_COOKIE['PHPUNIT_SELENIUM_TEST_ID']) &&
-    !isset($_GET['PHPUNIT_SELENIUM_TEST_ID']) &&
-    extension_loaded('xdebug')) {
-    $GLOBALS['PHPUNIT_FILTERED_FILES'] = array(__FILE__);
 
-    xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+if (!isset($GLOBALS['PHPUNIT_COVERAGE_DATA_DIRECTORY']))
+{
+	$GLOBALS['PHPUNIT_COVERAGE_DATA_DIRECTORY'] = false;
+}
+
+if (isset($_COOKIE['PHPUNIT_SELENIUM_TEST_ID']) &&
+	!isset($_GET['PHPUNIT_SELENIUM_TEST_ID']) &&
+	extension_loaded('xdebug')
+)
+{
+	$GLOBALS['PHPUNIT_FILTERED_FILES'] = array(__FILE__);
+
+	xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 }

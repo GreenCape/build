@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6ce12ad92999761febdde262593f505c",
+    "hash": "49a963f0c320c1253479acf8f1f1b9dd",
     "packages": [
         {
             "name": "andrewsville/php-token-reflection",
@@ -598,6 +598,48 @@
             "description": "A tool for managing Joomla! installations from the command line.",
             "homepage": "https://github.com/GreenCape/joomla-cli",
             "time": "2015-06-30 16:35:35"
+        },
+        {
+            "name": "greencape/phing-tasks",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/GreenCape/phing-tasks.git",
+                "reference": "1288cbc9a9ac0783e7a6d454c2d98b26ee2fb792"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/GreenCape/phing-tasks/zipball/1288cbc9a9ac0783e7a6d454c2d98b26ee2fb792",
+                "reference": "1288cbc9a9ac0783e7a6d454c2d98b26ee2fb792",
+                "shasum": ""
+            },
+            "require": {
+                "phing/phing": "~2.9"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "phpunit/phpunit": "~4"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Niels Braczek",
+                    "email": "nbraczek@bsds.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "A collection of Phing tasks, mainly for use in GreenCape/build.",
+            "homepage": "https://github.com/GreenCape/phing-tasks",
+            "time": "2015-07-03 00:07:47"
         },
         {
             "name": "herrera-io/json",
@@ -2293,16 +2335,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.7.5",
+            "version": "4.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f6701ef3faea759acd1910a7751d8d102a7fd5bc"
+                "reference": "0ebabb4cda7d066be8391dfdbaf57fe70ac9a99b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f6701ef3faea759acd1910a7751d8d102a7fd5bc",
-                "reference": "f6701ef3faea759acd1910a7751d8d102a7fd5bc",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0ebabb4cda7d066be8391dfdbaf57fe70ac9a99b",
+                "reference": "0ebabb4cda7d066be8391dfdbaf57fe70ac9a99b",
                 "shasum": ""
             },
             "require": {
@@ -2361,7 +2403,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-06-21 07:23:36"
+            "time": "2015-06-30 06:53:57"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -4616,7 +4658,8 @@
         "davidfuhr/php-plantumlwriter": 0,
         "phpunit/php-invoker": 0,
         "phpunit/dbunit": 0,
-        "phpunit/phpunit-selenium": 0
+        "phpunit/phpunit-selenium": 0,
+        "greencape/phing-tasks": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

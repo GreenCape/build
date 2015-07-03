@@ -25,6 +25,7 @@
     "phpunit/php-invoker": "@stable",
     "phpunit/dbunit": "@stable",
     "phpunit/phpunit-selenium": "@stable",
-    "greencape/joomla-cli": "~0.1"
+    "greencape/joomla-cli": "~0.1",
+    "greencape/phing-tasks": "dev-master"
   }
 }

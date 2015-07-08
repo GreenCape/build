@@ -1,4 +1,6 @@
 <?php
+require_once '/vendor/autoload';
+
 class Bootstrap3 extends BootstrapBase
 {
 	public function init($file)

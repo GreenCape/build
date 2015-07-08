@@ -1,4 +1,6 @@
 <?php
+require_once '/vendor/autoload';
+
 class Bootstrap25 extends BootstrapBase
 {
 	protected function getDefines()

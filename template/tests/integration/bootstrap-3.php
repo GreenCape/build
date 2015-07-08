@@ -1,5 +1,5 @@
 <?php
-require_once '/vendor/autoload';
+require_once '/vendor/autoload.php';
 
 class Bootstrap3 extends BootstrapBase
 {

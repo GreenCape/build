@@ -233,13 +233,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             Domain: ${domain}
             Server: ${environment.server.type}
 
-            Database type:
-            ${environment.database.engine}:${database.${environment.database.engine}.version}
-            (${environment.database.driver})
+            Database type: ${environment.database.engine}:${database.${environment.database.engine}.version} (${environment.database.driver})
             Database name: ${environment.database.name}
             Database prefix: ${environment.database.prefix}
-            Database user:
-            ${database.${environment.database.engine}.user}:${database.${environment.database.engine}.password}
+            Database user: ${database.${environment.database.engine}.user}:${database.${environment.database.engine}.password}
         </echo>
 
         <!-- Build the import files -->

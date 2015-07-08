@@ -97,7 +97,12 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                         <delete dir="${cms-root}/build/logs" quiet="true"/>
                         <mkdir dir="${cms-root}/build/logs"/>
 
-                        <foreach list="site, administrator" param="application" target="test-integration-app"/>
+                        <foreach param="application" target="test-integration-app">
+                            <fileset dir="${cms-root}/tests/integration">
+                                <depth max="0"/>
+                                <type type="dir"/>
+                            </fileset>
+                        </foreach>
 
                         <combine-coverage
                             pattern="/var/www/html/${domain}/" replace="${source}/"
@@ -125,32 +130,42 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="test-integration-app" hidden="true">
-        <filterchain id="integration-test.configuration">
-            <replacetokens>
-                <token key="APPLICATION" value="${application}"/>
-                <token key="CMS_ROOT" value="/var/www/html/${domain}"/>
-                <token key="TARGET" value="${target}"/>
-            </replacetokens>
-        </filterchain>
+        <if>
+            <not>
+                <equals arg1="${application}" arg2=""/>
+            </not>
+            <then>
+                <filterchain id="integration-test.configuration">
+                    <replacetokens>
+                        <token key="APPLICATION" value="${application}"/>
+                        <token key="CMS_ROOT" value="/var/www/html/${domain}"/>
+                        <token key="TARGET" value="${target}"/>
+                    </replacetokens>
+                </filterchain>
 
-        <echo message="${application}"/>
+                <echo message="${application}"/>
 
-        <!-- Find bootstrap file -->
-        <version-match dir="${build-templates}/tests/integration" pattern="bootstrap-(.*).php" returnProperty="bootstrap" version="${environment.joomla.version}"/>
-        <fail unless="bootstrap" message="No bootstrap file found for Joomla! ${environment.joomla.version}"/>
+                <!-- Find bootstrap file -->
+                <version-match dir="${build-templates}/tests/integration" pattern="bootstrap-(.*).php"
+                               returnProperty="bootstrap" version="${environment.joomla.version}"/>
+                <fail unless="bootstrap" message="No bootstrap file found for Joomla! ${environment.joomla.version}"/>
 
-        <!-- Configure bootstrap file -->
-        <copy file="${bootstrap}" tofile="${cms-root}/tests/integration/${application}/bootstrap.php">
-            <filterchain refid="integration-test.configuration"/>
-        </copy>
+                <!-- Configure bootstrap file -->
+                <copy file="${bootstrap}" tofile="${cms-root}/tests/integration/${application}/bootstrap.php">
+                    <filterchain refid="integration-test.configuration"/>
+                </copy>
 
-        <!-- Configure phpunit -->
-        <copy file="${build-templates}/tests/integration/phpunit.xml" tofile="${cms-root}/tests/integration/${application}/phpunit.xml">
-            <filterchain refid="integration-test.configuration"/>
-        </copy>
+                <!-- Configure phpunit -->
+                <copy file="${build-templates}/tests/integration/phpunit.xml"
+                      tofile="${cms-root}/tests/integration/${application}/phpunit.xml">
+                    <filterchain refid="integration-test.configuration"/>
+                </copy>
 
-        <property name="cmd" value='docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/integration/${application}; /vendor/bin/phpunit"'/>
-        <exec command="${cmd}" passthru="true" logoutput="true"/>
+                <property name="cmd"
+                          value='docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/integration/${application}; /vendor/bin/phpunit"'/>
+                <exec command="${cmd}" passthru="true" logoutput="true"/>
+            </then>
+        </if>
     </target>
 
     <target name="test-system" depends="dist-prepare, docker-start" description="Runs system tests on all test installations.">

@@ -41,6 +41,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <target name="self-update">
         <phingcall target="clean"/>
-        <exec command="git pull origin &amp;&amp; composer install" dir="${build}"/>
+        <exec command="git pull origin &amp;&amp; composer install" dir="${build}" passthru="true"/>
     </target>
 </project>

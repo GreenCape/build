@@ -43,7 +43,7 @@ php:
     - mail
 
 mysql:
-  build: ${build}/docker/mariadb
+  image: greencape/mariadb:${database.mysql.version}
   volumes:
     - ${server-dockyard}/mysql:/import.d
   environment:

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "85baa8e04681aec8ce1fea794c48c314",
+    "hash": "ac1b99fda2f486736d9188dbc6a61dd6",
     "packages": [
         {
             "name": "andrewsville/php-token-reflection",
@@ -4599,7 +4599,163 @@
             "time": "2013-12-19 11:40:00"
         }
     ],
-    "packages-dev": [],
+    "packages-dev": [
+        {
+            "name": "guzzlehttp/guzzle",
+            "version": "4.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "e196b8f44f9492a11261ea8f7b9724613a198daf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/e196b8f44f9492a11261ea8f7b9724613a198daf",
+                "reference": "e196b8f44f9492a11261ea8f7b9724613a198daf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/streams": "~1.4",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "~4.0",
+                "psr/log": "~1.0"
+            },
+            "suggest": {
+                "ext-curl": "Guzzle will use specific adapters if cURL is present"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle is a PHP HTTP client library and framework for building RESTful web service clients",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "client",
+                "curl",
+                "framework",
+                "http",
+                "http client",
+                "rest",
+                "web service"
+            ],
+            "time": "2014-08-14 20:29:51"
+        },
+        {
+            "name": "guzzlehttp/streams",
+            "version": "1.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/streams.git",
+                "reference": "fb0d1ee29987c2bdc59867bffaade6fc88c2675f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/streams/zipball/fb0d1ee29987c2bdc59867bffaade6fc88c2675f",
+                "reference": "fb0d1ee29987c2bdc59867bffaade6fc88c2675f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Stream\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Provides a simple abstraction over streams of data (Guzzle 4+)",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "stream"
+            ],
+            "time": "2014-08-10 23:57:01"
+        },
+        {
+            "name": "stage1/docker-php",
+            "version": "v0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stage1/docker-php.git",
+                "reference": "c518a2595b4fad43a9605c3d5cdd7305823841c3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stage1/docker-php/zipball/c518a2595b4fad43a9605c3d5cdd7305823841c3",
+                "reference": "c518a2595b4fad43a9605c3d5cdd7305823841c3",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~4.1",
+                "guzzlehttp/streams": "~1.3",
+                "php": ">=5.4",
+                "symfony/filesystem": "~2.3",
+                "symfony/process": "~2.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Docker PHP client",
+            "time": "2015-02-25 11:13:13"
+        }
+    ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {

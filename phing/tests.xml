@@ -44,7 +44,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </reflexive>
     </target>
 
-    <target name="test-integration" depends="dist-prepare, docker-start" description="Runs integration tests on all test installations.">
+    <target name="test-integration" depends="dist-prepare, docker-build, docker-start" description="Runs integration tests on all test installations.">
         <!-- @todo Make this callable for arbitrary test environments-->
 
         <!-- Handle each test environment -->

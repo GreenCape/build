@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 @author     Niels Braczek <nbraczek@bsds.de>
 @copyright  Copyright (C) 2013-15 BSDS Braczek Software- und DatenSysteme. All rights reserved.
 -->
-<project name="Setup" default="none">
+<project name="Setup" default="self-update">
 
     <taskdef file="${project.basedir}/build/vendor/greencape/phing-tasks/tasks.properties"/>
 
@@ -39,7 +39,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <property name="build-templates" value="${build}/template"/>
     <property name="server-dockyard" value="${build}/servers"/>
 
-    <target name="none" hidden="true">
-        <fail message="This target should never be called!"/>
+    <target name="self-update" hidden="true">
+        <phingcall target="clean"/>
+        <exec command="git pull origin &amp;&amp; composer install" dir="${build}"/>
     </target>
 </project>

@@ -372,7 +372,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             <available file="${server-dockyard}/docker-compose.yml" property="unused"/>
             <then>
                 <exec command="docker-compose up --no-recreate -d" dir="${server-dockyard}" passthru="true"/>
-                <!--<exec command="sleep 15"/>--><!-- Give the databases time to load the data -->
+                <exec command="sleep 15"/><!-- Give the containers time to setup -->
             </then>
             <else>
                 <echo message="Servers are not set up. Run  phing docker-build  first."/>
@@ -385,7 +385,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             <available file="${server-dockyard}/docker-compose.yml" property="unused"/>
             <then>
                 <exec command="docker-compose up -d" dir="${server-dockyard}" passthru="true"/>
-                <!--<exec command="sleep 15"/>--><!-- Give the databases time to load the data -->
+                <exec command="sleep 15"/><!-- Give the containers time to setup -->
             </then>
             <else>
                 <echo message="Servers are not set up. Run  phing docker-build  first."/>

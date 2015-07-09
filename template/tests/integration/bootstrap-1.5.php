@@ -47,8 +47,19 @@ class Bootstrap
 
 	protected function getDefines()
 	{
-		parent::getDefines();
 		define('DS', DIRECTORY_SEPARATOR);
+		define('_JEXEC', 1);
+
+		if (file_exists($this->cmsDirectory . "{$this->appDirectory}/defines.php"))
+		{
+			include_once $this->cmsDirectory . "{$this->appDirectory}/defines.php";
+		}
+
+		if (!defined('_JDEFINES'))
+		{
+			define('JPATH_BASE', $this->cmsDirectory . $this->appDirectory);
+			require_once JPATH_BASE . "/includes/defines.php";
+		}
 	}
 
 	protected function getLoader()

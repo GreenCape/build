@@ -39,6 +39,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     <property name="build-templates" value="${build}/template"/>
     <property name="server-dockyard" value="${build}/servers"/>
 
+    <property name="bin" value="${build}/vendor/bin"/>
+
     <target name="self-update">
         <phingcall target="clean"/>
         <exec command="git pull origin &amp;&amp; composer update" dir="${build}" passthru="true"/>

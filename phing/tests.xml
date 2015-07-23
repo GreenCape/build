@@ -27,11 +27,15 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <target name="test" depends="test-unit, test-integration, test-system, test-coverage-report" description="Runs all tests locally and in the test containers."/>
 
+    <!--
+    Perform unit tests locally
+    The phpunit.xml(.dist) in the unit test directory is used to configure PHPUnit.
+    The logfiles are expected to be stored in ${build}/logs/coverage.
+    The test entries in the logs are prepended with 'Unit: '.
+    -->
     <target name="test-unit" depends="phpab" description="Runs local unit tests">
-
         <mkdir dir="${build}/logs/coverage"/>
-
-        <exec command="phpunit" dir="${unit-tests}" passthru="true"/>
+        <exec command="${bin}/phpunit" dir="${unit-tests}" passthru="true"/>
         <reflexive>
             <fileset dir="${build}/logs/coverage">
                 <include name="**/*"/>

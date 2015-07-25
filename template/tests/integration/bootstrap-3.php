@@ -14,7 +14,7 @@ class Bootstrap
 
 	protected function initApp()
 	{
-		JFactory::getApplication($this->application, array('session' => false));
+		JFactory::getApplication($this->application);
 	}
 
 	public function init($file)

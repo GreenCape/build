@@ -17,7 +17,7 @@
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">@CMS_ROOT@</directory>
-            <exclude name="**/vendor/**"/>
+            <exclude/>
         </whitelist>
     </filter>
 </phpunit>

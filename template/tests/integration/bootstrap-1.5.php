@@ -87,9 +87,5 @@ class Bootstrap
 	}
 }
 
-echo "\nBootstrapping PHPUnit (" . __FILE__ . ") ...\n";
-
 $bootstrap = new Bootstrap;
 $bootstrap->init(__FILE__);
-
-echo "done.\n";

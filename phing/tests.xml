@@ -27,12 +27,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <target name="test" depends="test-unit, test-integration, test-system, test-coverage-report" description="Runs all tests locally and in the test containers."/>
 
-    <!--
-    Perform unit tests locally
-    The phpunit.xml(.dist) in the unit test directory is used to configure PHPUnit.
-    The logfiles are expected to be stored in ${build}/logs/coverage.
-    The test entries in the logs are prepended with 'Unit: '.
-    -->
     <target name="test-unit" depends="phpab" description="Runs local unit tests">
         <mkdir dir="${build}/logs/coverage"/>
         <exec command="${bin}/phpunit" dir="${unit-tests}" passthru="true"/>
@@ -48,10 +42,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         </reflexive>
     </target>
 
-    <target name="test-integration" depends="dist-prepare, docker-start" description="Runs integration tests on all test installations.">
-        <!-- @todo Make this callable for arbitrary test environments-->
-
-        <!-- Handle each test environment -->
+    <target name="test-integration" depends="docker-start" description="Runs integration tests on all test installations.">
         <foreach param="environment-definition" target="test-integration-single">
             <fileset dir="${test-environments}">
                 <include name="*.xml"/>
@@ -59,7 +50,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <exclude name="default.xml"/>
             </fileset>
         </foreach>
-
     </target>
 
     <target name="test-integration-single" description="Run integrations tests on a single test installation" hidden="true">
@@ -88,6 +78,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <uptodate property="test-integration-single.status" targetfile="${build}/logs/coverage/integration-${target}.cov" value="uptodate">
             <fileset refid="source-files"/>
             <fileset refid="integration-test-files"/>
+            <filelist dir="${test-environments}" files="${environment-definition}"/>
         </uptodate>
         <if>
             <equals arg1="${test-integration-single.status}" arg2="uptodate"/>
@@ -165,9 +156,9 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                     <filterchain refid="integration-test.configuration"/>
                 </copy>
 
-                <property name="cmd" value='docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/integration/${application}; /vendor/bin/phpunit"'/>
+                <property name="cmd" value='docker exec -i ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/integration/${application}; /usr/local/lib/php/vendor/bin/phpunit"'/>
 
-                <exec command="${cmd}" passthru="true" logoutput="true"/>
+                <exec command="${cmd}" passthru="true" logoutput="true" level="info"/>
             </then>
         </if>
     </target>
@@ -232,8 +223,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 </copy>
 
                 <property name="container" value="servers_${environment.server.type}_1"/>
-                <property name="cmd" value='docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/system; /vendor/bin/phpunit"'/>
-                <exec command="${cmd}" passthru="true" logoutput="true"/>
+                <property name="cmd" value='docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/system; /usr/local/lib/php/vendor/bin/phpunit"'/>
+                <exec command="${cmd}" passthru="true" logoutput="true" checkreturn="true"/>
 
                 <copy todir="${build}/logs/coverage">
                     <fileset dir="${cms-root}/build/logs/">

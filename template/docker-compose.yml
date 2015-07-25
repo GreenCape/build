@@ -3,7 +3,7 @@ apache:
   volumes:
     - ${server-dockyard}/apache/conf:/etc/apache2/sites-enabled
     - ${server-dockyard}/apache/html:/var/www/html
-    - ${build}/vendor:/vendor
+    - ${build}/vendor:/usr/local/lib/php/vendor
   environment:
     DISTFILES: $DISTFILES
   links:
@@ -16,7 +16,7 @@ nginx:
   volumes:
     - ${server-dockyard}/nginx/conf:/etc/nginx/conf.d
     - ${server-dockyard}/nginx/html:/var/www/html
-    - ${build}/vendor:/vendor
+    - ${build}/vendor:/usr/local/lib/php/vendor
   environment:
     DISTFILES: $DISTFILES
   links:
@@ -36,7 +36,7 @@ php:
   build: ${build}/docker/php-fpm
   volumes:
     - ${server-dockyard}/nginx/html:/var/www/html
-    - ${build}/vendor:/vendor
+    - ${build}/vendor:/usr/local/lib/php/vendor
   links:
     - mysql
     - pgsql:postgresql

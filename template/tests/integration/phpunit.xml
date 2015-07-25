@@ -15,9 +15,9 @@
     </logging>
 
     <filter>
-        <whitelist addUncoveredFilesFromWhitelist="false">
+        <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">@CMS_ROOT@</directory>
-            <exclude/>
+            <exclude name="**/vendor/**"/>
         </whitelist>
     </filter>
 </phpunit>

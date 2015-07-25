@@ -14,7 +14,7 @@ class Bootstrap
 
 	protected function initApp()
 	{
-		JFactory::getApplication($this->application);
+		JFactory::getApplication($this->application, array('session' => false));
 	}
 
 	public function init($file)
@@ -23,13 +23,11 @@ class Bootstrap
 
 		$this->setServerHttpVars();
 		$this->getDefines();
-		$this->getLoader();
 		$this->getFramework();
+		$this->getLoader();
 		$this->getHelpers();
 
 		$this->initApp();
-
-		echo "\nBootstrap file for PHPUnit: " . $file . "\n";
 	}
 
 	protected function assertPhpVersion($version)
@@ -64,7 +62,7 @@ class Bootstrap
 
 	protected function getLoader()
 	{
-		require_once $this->cmsDirectory . '/libraries/loader.php';
+		require_once $this->cmsDirectory . '/libraries/cms.php';
 	}
 
 	protected function getFramework()

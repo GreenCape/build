@@ -27,8 +27,6 @@ class Bootstrap
 		$this->getHelpers();
 
 		$this->initApp();
-
-		echo "\nBootstrap file for PHPUnit: " . $file . "\n";
 	}
 
 	protected function assertPhpVersion($version)
@@ -89,5 +87,9 @@ class Bootstrap
 	}
 }
 
+echo "\nBootstrapping PHPUnit (" . __FILE__ . ") ...\n";
+
 $bootstrap = new Bootstrap;
 $bootstrap->init(__FILE__);
+
+echo "done.\n";

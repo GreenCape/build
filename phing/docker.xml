@@ -33,7 +33,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <expandproperties/>
     </filterchain>
 
-    <target name="docker-build" depends="docker-rm, dist-prepare" description="Generates the contents and prepares the test containers.">
+    <target name="docker-build" description="Generates the contents and prepares the test containers.">
         <uptodate property="docker-build.status" targetfile="${server-dockyard}/docker-compose.yml" value="uptodate">
             <fileset refid="source-files"/>
             <fileset refid="integration-test-files"/>
@@ -111,7 +111,6 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 </trycatch>
             </else>
         </if>
-
     </target>
 
     <target name="docker-build-system" hidden="true">
@@ -367,17 +366,10 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <exec command='chmod -R 0777 "${cms-root}"'/><!-- A better way would be to change ownership within the containers -->
     </target>
 
-    <target name="docker-start" description="Starts the test containers, building them only if not existing.">
-        <if>
-            <available file="${server-dockyard}/docker-compose.yml" property="unused"/>
-            <then>
-                <exec command="docker-compose up --no-recreate -d" dir="${server-dockyard}" passthru="true"/>
-                <exec command="sleep 15"/><!-- Give the containers time to setup -->
-            </then>
-            <else>
-                <echo message="Servers are not set up. Run  phing docker-build  first."/>
-            </else>
-        </if>
+    <target name="docker-start" depends="docker-build" description="Starts the test containers, building them only if not existing.">
+        <exec command="docker-compose up --no-recreate -d" dir="${server-dockyard}" passthru="true"/>
+        <exec command="sleep 15"/>
+        <!-- Give the containers time to setup -->
     </target>
 
     <target name="docker-up" description="Starts the test containers after rebuilding them.">

@@ -27,6 +27,13 @@
     "phpunit/phpunit-selenium": "@stable",
     "greencape/joomla-cli": "~0.1",
     "greencape/phing-tasks": "~0.1",
-    "greencape/joomla-cs": "~0.2"
+    "greencape/joomla-cs": "~0.2",
+    "zendframework/zend-cache": "2.5.1",
+    "zendframework/zend-config": "2.5.1",
+    "zendframework/zend-filter": "2.5.1",
+    "zendframework/zend-i18n": "2.5.1",
+    "zendframework/zend-serializer": "2.5.1",
+    "zendframework/zend-servicemanager": "2.5.1",
+    "zendframework/zend-stdlib": "2.5.1"
   }
 }

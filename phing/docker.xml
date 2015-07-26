@@ -193,6 +193,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 <include name="system/**/*"/>
                 <include name="autoload.php"/>
             </fileset>
+            <filterchain refid="expand"/>
         </copy>
         <copy todir="${cms-root}/tests/system" includeemptydirs="false">
             <fileset dir="${build-templates}/selenium">

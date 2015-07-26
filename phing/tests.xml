@@ -156,7 +156,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                     <filterchain refid="integration-test.configuration"/>
                 </copy>
 
-                <property name="cmd" value='docker exec -i ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/integration/${application}; /usr/local/lib/php/vendor/bin/phpunit"'/>
+                <property name="cmd" value='docker exec ${container} /bin/bash -c "cd /var/www/html/${domain}/tests/integration/${application}; /usr/local/lib/php/vendor/bin/phpunit"'/>
 
                 <exec command="${cmd}" passthru="true" logoutput="true" level="info"/>
             </then>

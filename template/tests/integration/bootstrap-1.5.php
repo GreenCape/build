@@ -18,7 +18,7 @@ class Bootstrap
 		$mainframe->initialise();
 	}
 
-	public function init($file)
+	public function init()
 	{
 		$this->setServerHttpVars();
 		$this->getDefines();
@@ -88,4 +88,4 @@ class Bootstrap
 }
 
 $bootstrap = new Bootstrap;
-$bootstrap->init(__FILE__);
+$bootstrap->init();

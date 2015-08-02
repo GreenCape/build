@@ -17,7 +17,7 @@ class Bootstrap
 		JFactory::getApplication($this->application);
 	}
 
-	public function init($file)
+	public function init()
 	{
 		$this->assertPhpVersion('5.3.10');
 
@@ -84,4 +84,4 @@ class Bootstrap
 }
 
 $bootstrap = new Bootstrap;
-$bootstrap->init(__FILE__);
+$bootstrap->init();

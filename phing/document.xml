@@ -40,7 +40,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="document-phpdocumentor2" description="Generate API documentation using PHPDocumentor2" hidden="true">
-        <exec executable="${build}/vendor/bin/phpdoc" dir="${project.basedir}" passthru="true">
+        <exec executable="${bin}/phpdoc" dir="${project.basedir}" passthru="true">
             <arg line="--target=${build}/report/api"/>
             <arg line="--directory=${source}"/>
             <arg line='--title="${apidoc.title}"'/>
@@ -74,7 +74,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="document-apigen" description="Generate API documentation using ApiGen" hidden="true">
-        <exec executable="${build}/vendor/bin/apigen" dir="${project.basedir}" passthru="true">
+        <exec executable="${bin}/apigen" dir="${project.basedir}" passthru="true">
             <arg line="generate"/>
             <arg line="--template-config=${build}/vendor/apigen/apigen/templates/bootstrap/config.neon"/>
             <arg line="--destination=${build}/report/api"/>

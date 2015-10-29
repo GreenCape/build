@@ -48,7 +48,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
                 </replaceregexp>
             </filterchain>
         </reflexive>
-        <exec executable="${build}/vendor/bin/phpcb" dir="${project.basedir}" passthru="true">
+        <exec executable="${bin}/phpcb" dir="${project.basedir}" passthru="true">
             <arg line="--log=${build}/logs"/>
             <arg line="--output=${build}/report/code-browser"/>
             <arg line="--crapThreshold=10"/>

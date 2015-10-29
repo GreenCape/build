@@ -70,7 +70,7 @@
 
     <target name="phpab" description="Generate autoload script" hidden="true">
         <foreach list="administrator/components, components" target="create-autoloader" param="target"/>
-        <exec command="phpab --tolerant --basedir . --output autoload.php mocks" dir="${tests}" passthru="true"/>
+        <exec command="${build}/vendor/bin/phpab --tolerant --basedir . --output autoload.php mocks" dir="${tests}" passthru="true"/>
     </target>
 
     <target name="create-autoloader" hidden="true">
@@ -78,7 +78,7 @@
             <available file="${source}/${target}" property="exists"/>
             <then>
                 <echo message="Creating autoloader for ${source}/${target}/${package.type}${package.name}"/>
-                <exec executable="phpab" dir="${source}/${target}/${package.type}${package.name}" passthru="true">
+                <exec executable="${build}/vendor/bin/phpab" dir="${source}/${target}/${package.type}${package.name}" passthru="true">
                     <arg line="--tolerant"/>
                     <arg line="--basedir ."/>
                     <arg line="--output autoload.php"/>

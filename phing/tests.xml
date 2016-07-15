@@ -29,7 +29,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
     <target name="test-unit" depends="phpab" description="Runs local unit tests">
         <mkdir dir="${build}/logs/coverage"/>
-        <exec command="${bin}/phpunit" dir="${unit-tests}" passthru="true"/>
+        <exec command="${bin}/phpunit ." dir="${unit-tests}" passthru="true"/>
         <reflexive>
             <fileset dir="${build}/logs/coverage">
                 <include name="**/*"/>

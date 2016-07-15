@@ -70,7 +70,7 @@
 
     <target name="phpab" description="Generate autoload script" hidden="true">
         <foreach list="administrator/components, components" target="create-autoloader" param="target"/>
-        <exec command="phpab --tolerant --basedir . --output autoload.php mocks" dir="${tests}" passthru="true"/>
+        <exec command="${bin}/phpab --tolerant --basedir . --output autoload.php ." dir="${tests}" passthru="true"/>
     </target>
 
     <target name="create-autoloader" hidden="true">
@@ -78,12 +78,12 @@
             <available file="${source}/${target}" property="exists"/>
             <then>
                 <echo message="Creating autoloader for ${source}/${target}/${package.type}${package.name}"/>
-                <exec executable="phpab" dir="${source}/${target}/${package.type}${package.name}" passthru="true">
+                <exec executable="${bin}/phpab" dir="${source}/${target}/${package.type}${package.name}" passthru="true">
                     <arg line="--tolerant"/>
                     <arg line="--basedir ."/>
                     <arg line="--output autoload.php"/>
                     <arg line="--template autoload.php.in"/>
-                    <arg path="../../"/>
+                    <arg path="."/>
                 </exec>
             </then>
         </if>
@@ -106,7 +106,7 @@
 
     <target name="inst-install" description="Install the AUT on a test installation" hidden="true">
         <echo message="Installing ${phing.project.name} version ${package.version} on ${target}"/>
-        <exec executable="${build}/vendor/bin/joomla" passthru="true">
+        <exec executable="${bin}/joomla" passthru="true">
             <arg line="install --ansi -vvv --basepath='${test.basedir}/${target}/source' '${dist.basedir}.zip'"/>
         </exec>
     </target>

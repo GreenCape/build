@@ -15,7 +15,8 @@
     <if>
         <available file="${source}/${manifest.file}" property="manifest.exists"/>
         <then>
-            <xmlproperty file="${source}/${manifest.file}" prefix="package" collapseAttributes="false" keepRoot="false"/>
+            <xmlproperty file="${source}/${manifest.file}" prefix="package" collapseAttributes="false"
+                         keepRoot="false"/>
         </then>
         <else>
             <echo message="Manifest file '${manifest.file}' not found." level="warning"/>
@@ -25,7 +26,8 @@
 
     <property name="qat.coverage" value="${build}/bin/qat-coverage.php"/>
     <property name="qat-selenium.binary" value="${build}/bin/qat-selenium.php"/>
-    <property name="selenium.binary" value="${project.basedir}/vendor/se/selenium-server-standalone/composer/bin/selenium-server-standalone.jar"/>
+    <property name="selenium.binary"
+              value="${project.basedir}/vendor/se/selenium-server-standalone/composer/bin/selenium-server-standalone.jar"/>
 
     <property name="dist.basedir" value="${project.basedir}/dist/${package.type}${package.name}-${package.version}"/>
 
@@ -48,7 +50,8 @@
         <include name="**/*"/>
     </fileset>
 
-    <target name="build" depends="prepare, test, quality, document" description="Performs all tests and generates documentation and the quality report."/>
+    <target name="build" depends="prepare, test, quality, document"
+            description="Performs all tests and generates documentation and the quality report."/>
 
     <target name="clean" description="Cleanup artifact directories" hidden="true">
         <delete dir="${build}/api" quiet="true"/>
@@ -78,7 +81,8 @@
             <available file="${source}/${target}" property="exists"/>
             <then>
                 <echo message="Creating autoloader for ${source}/${target}/${package.type}${package.name}"/>
-                <exec executable="${bin}/phpab" dir="${source}/${target}/${package.type}${package.name}" passthru="true">
+                <exec executable="${bin}/phpab" dir="${source}/${target}/${package.type}${package.name}"
+                      passthru="true">
                     <arg line="--tolerant"/>
                     <arg line="--basedir ."/>
                     <arg line="--output autoload.php"/>
@@ -94,12 +98,12 @@
     <target name="inst-copy" description="Copy the AUT and the tests to a test installation" hidden="true">
         <copy todir="${test.basedir}/${target}/source" overwrite="true">
             <fileset dir="${patchset.location}" expandsymboliclinks="true">
-                <include name="**/*" />
+                <include name="**/*"/>
             </fileset>
         </copy>
         <copy todir="${test.basedir}/${target}/tests" overwrite="true">
             <fileset dir="${tests}" expandsymboliclinks="true">
-                <include name="**/*" />
+                <include name="**/*"/>
             </fileset>
         </copy>
     </target>
@@ -180,8 +184,10 @@
         -->
         <mkdir dir="${dist.basedir}/${package.administration.files(folder)}"/>
         <copy todir="${dist.basedir}/${package.administration.files(folder)}">
-            <filelist dir="${source}/administrator/components/${package.type}${package.name}" files="${package.administration.files.folder}"/>
-            <filelist dir="${source}/administrator/components/${package.type}${package.name}" files="${package.administration.files.filename}"/>
+            <filelist dir="${source}/administrator/components/${package.type}${package.name}"
+                      files="${package.administration.files.folder}"/>
+            <filelist dir="${source}/administrator/components/${package.type}${package.name}"
+                      files="${package.administration.files.filename}"/>
         </copy>
         <!--
         Admin language

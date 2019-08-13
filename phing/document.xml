@@ -138,7 +138,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
         <delete dir="${build}/report/api/uml" quiet="true"/>
         <mkdir dir="${build}/report/api/uml"/>
         <copy file="${build}/config/plantuml/skin-bw-gradient.puml" tofile="${build}/report/api/uml/skin.puml"/>
-        <uml-filter dir="${build}/report/api/uml" jar="${build}/vendor/phpdocumentor/phpdocumentor/docs/.exts/plantuml.jar">
+        <uml-filter dir="${build}/report/api/uml" jar="${build}/plantuml/plantuml.jar">
             <fileset dir="${source}">
                 <include name="**/*.php"/>
             </fileset>

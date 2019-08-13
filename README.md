@@ -14,6 +14,7 @@ extensions for Joomla. It supports
 ## Installation
 
 See [Installation](http://greencape.github.io/build/installation/) chapter in the documentation.
+Requires PHP 7.1+.
 
 ## Documentation
 

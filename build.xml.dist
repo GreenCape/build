@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Name of your Project" default="build" basedir="..">
+<project name="Name of your Project" default="build" basedir=".">
 
     <!-- Directory layout -->
     <property name="build" value="${project.basedir}/build"/>
@@ -10,6 +10,7 @@
     <!-- Package data -->
     <property name="package.type" value="com_"/>
     <property name="package.name" value="foobar"/>
+    <!-- Manifest file relative to source directory -->
     <property name="manifest.file" value="installation/manifest.xml"/>
 
     <!-- supported generators: phpdocumentor2, apigen -->

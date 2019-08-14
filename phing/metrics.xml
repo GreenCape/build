@@ -81,8 +81,8 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
     </target>
 
     <target name="quality-check-style" description="Generates checkstyle.xml using PHP CodeSniffer.">
-        <phpcodesniffer standard="${build}/vendor/greencape/joomla-cs/Joomla" showSniffs="true" showWarnings="true">
-            <fileset refid="php-files"/>
+        <phpcodesniffer standard="${build}/vendor/greencape/coding-standards/src/Joomla" showSniffs="true" showWarnings="true">
+        <fileset refid="php-files"/>
             <formatter type="checkstyle" outfile="${build}/logs/checkstyle.xml"/>
         </phpcodesniffer>
     </target>

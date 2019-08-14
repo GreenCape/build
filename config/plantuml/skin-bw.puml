@@ -1,88 +1,89 @@
+@startuml
 skinparam backgroundcolor White
 skinparam handwritten true
 skinparam shadowing false
 
 skinparam class {
-    BorderColor Black
-    BackgroundColor White
-    FontName Verdana
-    FontSize 12
+	BorderColor Black
+	BackgroundColor White
+	FontName Verdana
+	FontSize 12
     FontColor Black
 
     ArrowColor Black
     ArrowFontName Verdana
-    ArrowFontSize 12
+	ArrowFontSize 12
     ArrowFontColor Black
 }
 
 skinparam stereotype {
-    ABorderColor Black
+	ABorderColor Black
     ABackgroundColor White
 
-    CBorderColor Black
+	CBorderColor Black
     CBackgroundColor White
 
-    IBorderColor Black
+	IBorderColor Black
     IBackgroundColor White
 }
 
 skinparam sequence {
-    BorderColor Black
-    BackgroundColor White
-    FontName Verdana
-    FontSize 12
+	BorderColor Black
+	BackgroundColor White
+	FontName Verdana
+	FontSize 12
     FontColor Black
 
     ArrowColor Black
     ArrowFontName Verdana
-    ArrowFontSize 12
+	ArrowFontSize 12
     ArrowFontColor Black
 
-    LifeLineBorderColor Black
-    LifeLineBackgroundColor White
+	LifeLineBorderColor Black
+	LifeLineBackgroundColor White
 
-    ParticipantBorderColor Black
-    ParticipantBackgroundColor White
-    ParticipantFontName Verdana
-    ParticipantFontSize 12
-    ParticipantFontColor Black
+	ParticipantBorderColor Black
+	ParticipantBackgroundColor White
+	ParticipantFontName Verdana
+	ParticipantFontSize 12
+	ParticipantFontColor Black
 
-    ActorBorderColor Black
-    ActorBackgroundColor White
-    ActorFontColor Black
-    ActorFontName Verdana
-    ActorFontSize 12
+	ActorBorderColor Black
+	ActorBackgroundColor White
+	ActorFontColor Black
+	ActorFontName Verdana
+	ActorFontSize 12
 }
 
 skinparam usecase {
-    BorderColor Black
-    BackgroundColor White
-    FontName Verdana
-    FontSize 12
+	BorderColor Black
+	BackgroundColor White
+	FontName Verdana
+	FontSize 12
     FontColor Black
 
     ArrowColor Black
     ArrowFontName Verdana
-    ArrowFontSize 12
+	ArrowFontSize 12
     ArrowFontColor Black
 
-    ActorBorderColor Black
-    ActorBackgroundColor White
-    ActorFontColor Black
-    ActorFontName Verdana
-    ActorFontSize 12
+	ActorBorderColor Black
+	ActorBackgroundColor White
+	ActorFontColor Black
+	ActorFontName Verdana
+	ActorFontSize 12
 }
 
 skinparam activity {
-    BorderColor Black
-    BackgroundColor White
-    FontName Verdana
-    FontSize 12
+	BorderColor Black
+	BackgroundColor White
+	FontName Verdana
+	FontSize 12
     FontColor Black
 
     ArrowColor Black
     ArrowFontName Verdana
-    ArrowFontSize 12
+	ArrowFontSize 12
     ArrowFontColor Black
 
     StartColor Black
@@ -91,10 +92,10 @@ skinparam activity {
 }
 
 skinparam state {
-    BorderColor Black
-    BackgroundColor White
-    FontName Verdana
-    FontSize 12
+	BorderColor Black
+	BackgroundColor White
+	FontName Verdana
+	FontSize 12
     FontColor Black
 
     StartColor Black
@@ -104,19 +105,19 @@ skinparam state {
 
 skinparam component {
     Style uml2
-    BorderColor Black
-    BackgroundColor White
-    FontName Verdana
-    FontSize 12
+	BorderColor Black
+	BackgroundColor White
+	FontName Verdana
+	FontSize 12
     FontColor Black
 
     ArrowColor Black
     ArrowFontName Verdana
-    ArrowFontSize 12
+	ArrowFontSize 12
     ArrowFontColor Black
 
-    InterfaceBorderColor Black
-    InterfaceBackgroundColor White
+	InterfaceBorderColor Black
+	InterfaceBackgroundColor White
 }
 
 skinparam node {
@@ -138,9 +139,10 @@ skinparam database {
 }
 
 skinparam note {
-    BorderColor Black
-    BackgroundColor White
-    FontName Verdana
-    FontSize 12
+	BorderColor Black
+	BackgroundColor White
+	FontName Verdana
+	FontSize 12
     FontColor Black
 }
+@enduml
